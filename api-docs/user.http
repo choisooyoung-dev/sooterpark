@@ -1,0 +1,25 @@
+###
+# 회원가입
+POST http://localhost:3000/user/register
+Content-Type: application/json
+
+{
+    "email": "ex02@gmail.com",
+    "name": "ex01",
+    "password": "qwerty01"
+} 
+
+###
+# 로그인
+POST http://localhost:3000/user/login
+Content-Type: application/json
+
+{
+    "email": "ex01@gmail.com",
+    "password": "qwerty01"
+} 
+
+###
+# 내 정보 조회
+GET http://localhost:3000/user/3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV4MDFAZ21haWwuY29tIiwic3ViIjozLCJpYXQiOjE3MDM0MzU2NDR9.arruz6lpkXswLnh0488DFxtbKd8452Y6ANrL4x2WzoA
