@@ -1,10 +1,20 @@
-import { Controller, Get, Post, Body, UseGuards, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  UseGuards,
+  Param,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { User } from './entities/user.entity';
+import { Request, Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -34,5 +44,17 @@ export class UserController {
   @Get(':id')
   getUser(@Param('id') id: number) {
     return this.userService.getUser(+id);
+  }
+
+  @UseGuards(AuthGuard('naver'))
+  @Get('/naver/login')
+  async loginNaver(@Req() req: Request, @Res() res: Response): Promise<any> {
+    try {
+      return await this.userService.OAuthLogin({ req, res });
+    } catch (error) {
+      console.error('Error in loginNaver:', error);
+      // 클라이언트에게 적절한 에러 응답을 보내거나 로깅 등 추가 조치를 취하세요.
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 }

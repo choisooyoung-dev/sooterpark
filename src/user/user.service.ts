@@ -69,6 +69,37 @@ export class UserService {
     };
   }
 
+  // 네이버 로그인
+  async OAuthLogin({ req, res }) {
+    let OAuthUser = await this.userRepository.findOne({
+      where: { email: req.user.email },
+    });
+
+    const hashedNaverPassword = await hash(req.user.id, 10);
+
+    if (!OAuthUser) {
+      OAuthUser = await this.userRepository.save({
+        email: req.user.email,
+        name: req.user.name,
+        password: hashedNaverPassword,
+      });
+    }
+    const email = req.user.email;
+
+    const payload = { email, sub: req.user.id };
+
+    console.log('access_token:', this.jwtService.sign(payload));
+
+    res.redirect('/');
+
+    return {
+      message: '로그인 성공',
+      success: true,
+      access_token: this.jwtService.sign(payload),
+      OAuthUser,
+    };
+  }
+
   async findByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
   }
