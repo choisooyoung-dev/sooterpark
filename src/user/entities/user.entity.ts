@@ -4,17 +4,22 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Role } from '../types/userRole.type';
+import { Payment } from 'src/payment/entities/payment.entity';
+import { Point } from 'src/point/entities/point.entity';
 
 @Index('email', ['email'], { unique: true })
 @Entity({
   name: 'user',
 })
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'user_id' })
   id: number;
 
   @Column({ type: 'varchar', unique: true, nullable: false })
@@ -37,4 +42,11 @@ export class User {
 
   @DeleteDateColumn()
   deleted_at?: Date;
+
+  @OneToOne(() => Point, (point) => point.user_id)
+  @JoinColumn()
+  point: Point;
+
+  @OneToMany(() => Payment, (payment) => payment.user_id)
+  payments: Payment[];
 }

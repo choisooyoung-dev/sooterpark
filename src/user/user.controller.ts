@@ -31,7 +31,13 @@ export class UserController {
 
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    return await this.userService.login(loginDto.email, loginDto.password);
+    return await this.userService.login(loginDto);
+  }
+
+  @Get('/check')
+  checkUser(@Req() req: any) {
+    const userPayload = req.user;
+    return this.userService.checkUser(userPayload);
   }
 
   @UseGuards(AuthGuard('jwt'))
