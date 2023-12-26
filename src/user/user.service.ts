@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import _ from 'lodash';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class UserService {
@@ -24,22 +25,26 @@ export class UserService {
     }
 
     const hashedPassword = await hash(password, 10);
-    await this.userRepository.save({
+    const newUser = await this.userRepository.save({
       email,
       name,
       password: hashedPassword,
     });
 
+    const payload = { email: newUser.email };
+    const accessToken = await this.jwtService.signAsync(payload);
     return {
       success: 'true',
       message: '회원가입 성공',
+      accessToken,
     };
   }
 
-  async login(email: string, password: string) {
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
     const user = await this.userRepository.findOne({
-      select: ['id', 'email', 'password'],
-      where: { email },
+      select: ['email', 'password'],
+      where: { email, deleted_at: null },
     });
     if (_.isNil(user)) {
       throw new UnauthorizedException('이메일을 확인해주세요.');
@@ -50,12 +55,19 @@ export class UserService {
     }
 
     const payload = { email, sub: user.id };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+
     return {
       message: '로그인 성공',
       success: true,
-      access_token: this.jwtService.sign(payload),
+      accessToken,
       user,
     };
+  }
+
+  checkUser(userPayload: any) {
+    return `유저 정보: ${JSON.stringify(userPayload)}}`;
   }
 
   async getUser(id: number) {

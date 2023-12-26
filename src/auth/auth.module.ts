@@ -19,5 +19,6 @@ import { NaverAuthGuard } from './naver-auth.guard';
     UserModule,
   ],
   providers: [JwtStrategy, NaverStrategy, NaverAuthGuard],
+  exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}
