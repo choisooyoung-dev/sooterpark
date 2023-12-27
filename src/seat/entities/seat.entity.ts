@@ -6,7 +6,6 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -39,6 +38,6 @@ export class Seat {
   @ManyToOne(() => Performance, (performance) => performance.id)
   performance: Performance;
 
-  @OneToOne(() => Ticket, (ticket) => ticket.id)
+  @ManyToOne(() => Ticket, (ticket) => ticket.seat)
   ticket: Ticket;
 }

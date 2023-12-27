@@ -16,8 +16,8 @@ export class Point {
   @PrimaryGeneratedColumn({ name: 'point_id' })
   id: number;
 
-  @Column({ type: 'int', nullable: false })
-  total_price: number;
+  @Column({ type: 'int', nullable: false, default: 1000000 })
+  total_point: number;
 
   @Column({ type: 'int', nullable: false })
   user_id: number;

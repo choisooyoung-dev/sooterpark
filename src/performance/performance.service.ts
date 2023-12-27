@@ -1,26 +1,102 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Performance } from './entities/performance.entity';
+import _ from 'lodash';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
 
 @Injectable()
 export class PerformanceService {
-  create(createPerformanceDto: CreatePerformanceDto) {
-    return 'This action adds a new performance';
+  private performances: {
+    id: number;
+    title: string;
+    content: string;
+    start_at: string;
+    end_at: string;
+    location: string;
+    user_id: number;
+  }[] = [];
+
+  constructor(
+    @InjectRepository(Performance)
+    private performanceRepository: Repository<Performance>,
+  ) {}
+
+  async getAll() {
+    return this.performanceRepository.find({
+      where: { deleted_at: null },
+    });
   }
 
-  findAll() {
-    return `This action returns all performance`;
+  async getOne(id: number) {
+    if (_.isNaN(id)) {
+      throw new BadRequestException('공연 ID가 잘못되었습니다.');
+    }
+    const performance = await this.performanceRepository.findOne({
+      where: { id, deleted_at: null },
+    });
+
+    if (!performance) {
+      throw new NotFoundException('찾을 수 없는 공연 ID 입니다.');
+    }
+
+    return performance;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} performance`;
+  async create(createPerformanceDto: CreatePerformanceDto) {
+    const { title, content, location, start_at, end_at } = createPerformanceDto;
+    const newPerformance = await this.performanceRepository.save({
+      title,
+      content,
+      location,
+      start_at,
+      end_at,
+    });
+
+    return {
+      success: 'true',
+      message: '공연 등록 성공',
+      newPerformance,
+    };
   }
 
-  update(id: number, updatePerformanceDto: UpdatePerformanceDto) {
-    return `This action updates a #${id} performance`;
+  async update(id: number, updatePerformanceDto: UpdatePerformanceDto) {
+    const existingPerformance = await this.performanceRepository.findOne({
+      where: { id, deleted_at: null },
+    });
+
+    if (!existingPerformance) {
+      throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+    }
+
+    const updatedPerformance = await this.performanceRepository.update(
+      id,
+      updatePerformanceDto,
+    );
+
+    return {
+      success: true,
+      message: '공연 수정 완료',
+      updatedPerformance,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} performance`;
+  async remove(id: number) {
+    const existingPerformance = await this.performanceRepository.findOne({
+      where: { id, deleted_at: null },
+    });
+
+    if (!existingPerformance) {
+      throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+    }
+
+    await this.performanceRepository.softDelete(id);
+
+    return { success: true, message: '삭제 완료되었습니다.' };
   }
 }

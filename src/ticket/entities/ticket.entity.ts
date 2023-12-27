@@ -6,9 +6,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -26,6 +25,9 @@ export class Ticket {
   @Column({ type: 'boolean', nullable: false })
   status: boolean;
 
+  @Column({ type: 'varchar', nullable: false })
+  seat_id: string;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -35,9 +37,8 @@ export class Ticket {
   @DeleteDateColumn()
   deleted_at?: Date;
 
-  @OneToOne(() => Seat, (seat) => seat.id)
-  @JoinColumn()
-  seat: Seat;
+  @OneToMany(() => Seat, (seat) => seat.ticket)
+  seat: Seat[];
 
   @ManyToOne(() => Performance, (performance) => performance.id)
   performance: Performance;

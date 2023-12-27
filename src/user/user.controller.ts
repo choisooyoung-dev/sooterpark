@@ -59,7 +59,6 @@ export class UserController {
       return await this.userService.OAuthLogin({ req, res });
     } catch (error) {
       console.error('Error in loginNaver:', error);
-      // 클라이언트에게 적절한 에러 응답을 보내거나 로깅 등 추가 조치를 취하세요.
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }

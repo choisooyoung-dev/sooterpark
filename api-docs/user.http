@@ -1,6 +1,9 @@
+@domain = http://localhost:3000
+@AccessToken = {{loginToken.response.body.$.accessToken}}
+
 ###
 # 회원가입
-POST http://localhost:3000/user/register
+POST {{domain}}/user/register
 Content-Type: application/json
 
 {
@@ -11,24 +14,25 @@ Content-Type: application/json
 
 ###
 # 로그인
-POST http://localhost:3000/user/login
+# @name loginToken
+POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "ex01@gmail.com",
-    "password": "qwerty01"
+    "email": "ex04@gmail.com",
+    "password": "qwerty04"
 }   
 
 ###
 # 내 정보 조회
-GET http://localhost:3000/user/4
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV4MDFAZ21haWwuY29tIiwic3ViIjozLCJpYXQiOjE3MDM0MzU2NDR9.arruz6lpkXswLnh0488DFxtbKd8452Y6ANrL4x2WzoA
+GET {{domain}}/user/4
+Authorization: Bearer {{AccessToken}}
 
 ###
 # 네이버 로그인
-GET http://localhost:3000/user/naver/login
+GET {{domain}}/user/naver/login
 
 ###
 #
-GET  http://localhost:3000/user/check
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImV4MDFAZ21haWwuY29tIiwiaWF0IjoxNzAzNTIyMzY3fQ.VWx3Ef9HS9OeR168oGvHkcE2PWPsfnxVnvr0imYsqgg
+GET  {{domain}}/user/check
+Authorization: Bearer {{AccessToken}}
