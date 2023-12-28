@@ -1,4 +1,3 @@
-import { Seat } from 'src/seat/entities/seat.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,

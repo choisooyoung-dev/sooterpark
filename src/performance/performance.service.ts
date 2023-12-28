@@ -12,16 +12,6 @@ import { UpdatePerformanceDto } from './dto/update-performance.dto';
 
 @Injectable()
 export class PerformanceService {
-  private performances: {
-    id: number;
-    title: string;
-    content: string;
-    start_at: string;
-    end_at: string;
-    location: string;
-    user_id: number;
-  }[] = [];
-
   constructor(
     @InjectRepository(Performance)
     private performanceRepository: Repository<Performance>,
