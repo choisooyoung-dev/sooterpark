@@ -1,5 +1,5 @@
+import { Payment } from 'src/payment/entities/payment.entity';
 import { Performance } from 'src/performance/entities/performance.entity';
-import { Ticket } from 'src/ticket/entities/ticket.entity';
 import {
   Column,
   CreateDateColumn,
@@ -17,11 +17,17 @@ export class Seat {
   @PrimaryGeneratedColumn({ name: 'seat_id' })
   id: number;
 
-  @Column({ type: 'varchar', nullable: false, unique: true })
-  seat_num: string;
+  @Column({ type: 'int', nullable: false, unique: true })
+  seat_num: number;
+
+  @Column({ type: 'varchar', nullable: false })
+  grade: string;
 
   @Column({ type: 'boolean', nullable: false })
   status: boolean;
+
+  @Column({ type: 'int', nullable: false })
+  price: number;
 
   @Column({ type: 'int', nullable: false })
   performance_id: number;
@@ -38,6 +44,6 @@ export class Seat {
   @ManyToOne(() => Performance, (performance) => performance.id)
   performance: Performance;
 
-  @ManyToOne(() => Ticket, (ticket) => ticket.seat)
-  ticket: Ticket;
+  @ManyToOne(() => Payment, (payment) => payment.id)
+  payment: Payment;
 }

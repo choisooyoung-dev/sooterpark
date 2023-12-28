@@ -10,15 +10,19 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import _ from 'lodash';
 import { LoginDto } from './dto/login.dto';
+import { Role } from './types/userRole.type';
+import { Point } from 'src/point/entities/point.entity';
 
 @Injectable()
 export class UserService {
   constructor(
+    @InjectRepository(Point) private pointRepository: Repository<Point>,
     @InjectRepository(User) private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(email: string, name: string, password: string) {
+  // 회원가입
+  async register(email: string, name: string, password: string, role: Role) {
     const existingUser = await this.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('해당 이메일로 가입된 사용자가 있습니다.');
@@ -29,6 +33,14 @@ export class UserService {
       email,
       name,
       password: hashedPassword,
+      role,
+    });
+
+    await this.pointRepository.save({
+      user: newUser, // User 엔터티와 관계 설정
+      income: 0,
+      outcome: 0,
+      total: 1000000,
     });
 
     const payload = { email: newUser.email };
@@ -40,6 +52,7 @@ export class UserService {
     };
   }
 
+  // 로그인
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
     const user = await this.userRepository.findOne({
@@ -66,14 +79,19 @@ export class UserService {
     };
   }
 
+  // 인증 인가 체크
   checkUser(userPayload: any) {
     return `유저 정보: ${JSON.stringify(userPayload)}}`;
   }
 
+  // 유저 이름과 포인트 조회
   async getUser(id: number) {
-    const user = await this.userRepository.findOne({
-      where: { id },
-    });
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.points', 'points')
+      .select(['user.name', 'points.total'])
+      .where({ id })
+      .getOne();
 
     return {
       success: true,

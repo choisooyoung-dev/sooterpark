@@ -1,6 +1,4 @@
-import { Payment } from 'src/payment/entities/payment.entity';
 import { Seat } from 'src/seat/entities/seat.entity';
-import { Ticket } from 'src/ticket/entities/ticket.entity';
 import {
   Column,
   CreateDateColumn,
@@ -10,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Category } from '../types/performanceCategory.type';
 
 @Entity({
   name: 'performance',
@@ -27,6 +26,16 @@ export class Performance {
   @Column({ type: 'varchar', nullable: false })
   location: string;
 
+  // 배열로 받아야하는디
+  @Column({ type: 'json', nullable: false })
+  schedule: string[];
+
+  @Column({ type: 'varchar', nullable: false })
+  image: string;
+
+  @Column({ type: 'enum', enum: Category, default: Category.Musical })
+  category: Category;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -36,12 +45,6 @@ export class Performance {
   @DeleteDateColumn()
   deleted_at?: Date;
 
-  @OneToMany(() => Payment, (payment) => payment.performance_id)
-  payments: Payment[];
-
   @OneToMany(() => Seat, (seat) => seat.id)
   seat: Seat[];
-
-  @OneToMany(() => Ticket, (ticket) => ticket.id)
-  ticket: Ticket[];
 }

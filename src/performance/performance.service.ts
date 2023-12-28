@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Performance } from './entities/performance.entity';
 import _ from 'lodash';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
@@ -48,14 +48,25 @@ export class PerformanceService {
     return performance;
   }
 
+  async search(keyword: string) {
+    const searchValue = await this.performanceRepository.find({
+      where: {
+        title: Like(`%${keyword}%`),
+      },
+    });
+    return searchValue;
+  }
+
   async create(createPerformanceDto: CreatePerformanceDto) {
-    const { title, content, location, start_at, end_at } = createPerformanceDto;
+    const { title, content, location, schedule, image, category } =
+      createPerformanceDto;
     const newPerformance = await this.performanceRepository.save({
       title,
       content,
       location,
-      start_at,
-      end_at,
+      schedule,
+      image,
+      category,
     });
 
     return {

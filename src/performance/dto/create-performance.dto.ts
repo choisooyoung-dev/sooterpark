@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Category } from '../types/performanceCategory.type';
 
 export class CreatePerformanceDto {
   @IsString()
@@ -10,14 +11,16 @@ export class CreatePerformanceDto {
   content: string;
 
   @IsString()
-  @IsNotEmpty({ message: '공연 시작 일시를 입력해주세요.' })
-  start_at: string;
-
-  @IsString()
-  @IsNotEmpty({ message: '공연 종료 일시를 입력해주세요.' })
-  end_at: string;
-
-  @IsString()
-  @IsNotEmpty({ message: '공연장 위치를 입력해주세요.' })
+  @IsNotEmpty({ message: '공연 위치를 입력해주세요.' })
   location: string;
+
+  @IsArray({ message: '공연 스케줄을 적어주세요.' })
+  schedule: string[];
+
+  @IsString()
+  @IsNotEmpty({ message: '공연 포스터 이미지를 첨부해주세요.' })
+  image: string;
+
+  @IsEnum(Category)
+  category: Category;
 }

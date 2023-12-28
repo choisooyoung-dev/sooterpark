@@ -10,21 +10,22 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { PointModule } from './point/point.module';
+
 import { PaymentModule } from './payment/payment.module';
-import { TicketModule } from './ticket/ticket.module';
+
 import { SeatModule } from './seat/seat.module';
 import { PerformanceModule } from './performance/performance.module';
 import { Payment } from './payment/entities/payment.entity';
 import { Performance } from './performance/entities/performance.entity';
 import { Point } from './point/entities/point.entity';
 import { Seat } from './seat/entities/seat.entity';
-import { Ticket } from './ticket/entities/ticket.entity';
+
 import { User } from './user/entities/user.entity';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
+import { PointModule } from './point/point.module';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -37,7 +38,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Payment, Performance, Point, Seat, Ticket, User],
+    entities: [Payment, Performance, Point, Seat, User],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -63,7 +64,6 @@ const typeOrmModuleOptions = {
     UserModule,
     PointModule,
     PaymentModule,
-    TicketModule,
     SeatModule,
     PerformanceModule,
     AuthModule,

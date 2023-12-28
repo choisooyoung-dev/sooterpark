@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { Role } from '../types/userRole.type';
 
 export class RegisterDto {
   @IsEmail()
@@ -12,4 +13,7 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty({ message: '이름을 입력해주세요.' })
   name: string;
+
+  @IsEnum(Role)
+  role: Role;
 }

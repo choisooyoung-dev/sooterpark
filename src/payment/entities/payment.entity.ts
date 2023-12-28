@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Ticket } from 'src/ticket/entities/ticket.entity';
+import { Seat } from 'src/seat/entities/seat.entity';
 
 @Entity({
   name: 'payment',
@@ -31,9 +31,6 @@ export class Payment {
   @Column({ type: 'int', nullable: false })
   performance_id: number;
 
-  @OneToMany(() => Ticket, (ticket) => ticket.id)
-  ticket: Ticket[];
-
   @Column({ type: 'boolean', nullable: false })
   status: string;
 
@@ -48,4 +45,7 @@ export class Payment {
 
   @DeleteDateColumn()
   deleted_at?: Date;
+
+  @OneToMany(() => Seat, (seat) => seat.id)
+  seats: Seat[];
 }

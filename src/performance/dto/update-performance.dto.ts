@@ -1,23 +1,39 @@
-import { IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { Category } from '../types/performanceCategory.type';
 
 export class UpdatePerformanceDto {
-  @IsString()
   @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   title?: string;
 
-  @IsString()
   @IsOptional()
+  @IsNotEmpty()
+  @IsString()
   content?: string;
 
-  @IsString()
   @IsOptional()
-  start_at?: string;
-
+  @IsNotEmpty()
   @IsString()
-  @IsOptional()
-  end_at?: string;
-
-  @IsString()
-  @IsOptional()
   location?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsArray()
+  schedule?: string[];
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  image?: string;
+
+  @IsOptional()
+  @IsEnum(Category)
+  category?: Category;
 }

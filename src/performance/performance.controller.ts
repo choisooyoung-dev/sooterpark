@@ -7,6 +7,7 @@ import {
   Patch,
   UseGuards,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PerformanceService } from './performance.service';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
@@ -23,6 +24,12 @@ export class PerformanceController {
   @Get()
   getAll() {
     return this.performanceService.getAll();
+  }
+
+  // 공연 검색
+  @Get('search')
+  searchPerformances(@Query('keyword') keyword: string) {
+    return this.performanceService.search(keyword);
   }
 
   // 특정 공연 조회
@@ -61,14 +68,4 @@ export class PerformanceController {
   ) {
     return await this.performanceService.remove(+id);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.performanceService.findOne(+id);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.performanceService.remove(+id);
-  // }
 }

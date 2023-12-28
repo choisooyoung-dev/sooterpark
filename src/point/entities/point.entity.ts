@@ -1,12 +1,11 @@
+import { Seat } from 'src/seat/entities/seat.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
-  CreateDateColumn,
-  DeleteDateColumn,
   Entity,
-  OneToOne,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({
@@ -16,21 +15,20 @@ export class Point {
   @PrimaryGeneratedColumn({ name: 'point_id' })
   id: number;
 
-  @Column({ type: 'int', nullable: false, default: 1000000 })
-  total_point: number;
+  @Column({ type: 'int', nullable: false })
+  income: number;
 
   @Column({ type: 'int', nullable: false })
-  user_id: number;
+  outcome: number;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @Column({ type: 'int', nullable: false, default: 1000000 })
+  total: number;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  // @ManyToOne(() => Seat, (seat) => seat.id)
+  // @JoinColumn({ name: 'seat_id' })
+  // seat: Seat;
 
-  @DeleteDateColumn()
-  deleted_at?: Date;
-
-  @OneToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'user_id' })
   user: User;
 }

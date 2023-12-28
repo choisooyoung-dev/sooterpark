@@ -26,6 +26,7 @@ export class UserController {
       registerDto.email,
       registerDto.name,
       registerDto.password,
+      registerDto.role,
     );
   }
 
