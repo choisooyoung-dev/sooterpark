@@ -7,8 +7,12 @@
 GET {{domain}}/performance
 
 ###
-# 특정 공연 조회
-GET {{domain}}/performance/1
+# 공연 검색 조회
+GET {{domain}}/performance/search?keyword=렌트
+
+###
+# 공연 상세 조회
+GET {{domain}}/performance/9
 
 ###
 # 로그인
@@ -33,24 +37,25 @@ Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "title": "공연 제목1",
-    "content": "공연 내용3",
-    "location": "인천시 동구",
-    "start_at": "2023년 12월 28일 수요일 20시",
-    "end_at": "2023년 12월 28일 수요일 22시"
+    "title": "뮤지컬 - 렌트",
+    "content": "렌트",
+    "location": "서울시",
+    "schedule": ["2023년 12월 28일 수요일 20시", "2023년 12월 28일 수요일 22시"],
+    "image": "imageurl://urlurl",
+    "category":0
 } 
-
+ 
 ###
 # 공연 수정 - Admin
-PATCH  {{domain}}/performance/5
+PATCH  {{domain}}/performance/9
 Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "content": "공연 내용1"
+    "schedule": ["2023년 12월 28일 수요일 22시", "2023년 12월 28일 수요일 23시"]
 }
 
 ###
 # 공연 삭제 - Admin
-DELETE {{domain}}/performance/5
+DELETE {{domain}}/performance/8
 Authorization: Bearer {{AccessToken}}
