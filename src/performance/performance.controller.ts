@@ -15,6 +15,7 @@ import { UpdatePerformanceDto } from './dto/update-performance.dto';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/user/types/userRole.type';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
 
 @Controller('performance')
 export class PerformanceController {
@@ -42,8 +43,14 @@ export class PerformanceController {
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @Post('create')
-  async create(@Body() createPerformanceDto: CreatePerformanceDto) {
-    return await this.performanceService.create(createPerformanceDto);
+  async create(
+    @Body() createPerformanceDto: CreatePerformanceDto,
+    @Body() createScheduleDto: CreateScheduleDto,
+  ) {
+    return await this.performanceService.create(
+      createPerformanceDto,
+      createScheduleDto,
+    );
   }
 
   //  공연 수정 - Admin

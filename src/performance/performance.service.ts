@@ -5,16 +5,21 @@ import {
 } from '@nestjs/common';
 import { CreatePerformanceDto } from './dto/create-performance.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { DataSource, Like, Repository } from 'typeorm';
 import { Performance } from './entities/performance.entity';
 import _ from 'lodash';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
+import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
+import { Schedule } from 'src/schedule/entities/schedule.entity';
 
 @Injectable()
 export class PerformanceService {
   constructor(
     @InjectRepository(Performance)
     private performanceRepository: Repository<Performance>,
+    @InjectRepository(Schedule)
+    private scheduleRepository: Repository<Schedule>,
+    private dataSource: DataSource,
   ) {}
 
   async getAll() {
@@ -47,23 +52,40 @@ export class PerformanceService {
     return searchValue;
   }
 
-  async create(createPerformanceDto: CreatePerformanceDto) {
-    const { title, content, location, schedule, image, category } =
-      createPerformanceDto;
-    const newPerformance = await this.performanceRepository.save({
-      title,
-      content,
-      location,
-      schedule,
-      image,
-      category,
-    });
+  async create(
+    createPerformanceDto: CreatePerformanceDto,
+    createScheduleDto: CreateScheduleDto,
+  ) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    return {
-      success: 'true',
-      message: '공연 등록 성공',
-      newPerformance,
-    };
+    try {
+      const { times, date, start_at, end_at } = createScheduleDto;
+      const newPerformance =
+        await this.performanceRepository.save(createPerformanceDto);
+      const id: any = newPerformance.id;
+      // console.log('id => ', id);
+      const newSchedule = await this.scheduleRepository.save({
+        performance: id,
+        times,
+        date,
+        start_at,
+        end_at,
+      });
+
+      await queryRunner.commitTransaction();
+      return {
+        success: 'true',
+        message: '공연 등록 성공',
+        newPerformance,
+        newSchedule,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async update(id: number, updatePerformanceDto: UpdatePerformanceDto) {

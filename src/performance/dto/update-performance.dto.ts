@@ -1,10 +1,4 @@
-import {
-  IsArray,
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Category } from '../types/performanceCategory.type';
 
 export class UpdatePerformanceDto {
@@ -25,15 +19,11 @@ export class UpdatePerformanceDto {
 
   @IsOptional()
   @IsNotEmpty()
-  @IsArray()
-  schedule?: string[];
-
-  @IsOptional()
-  @IsNotEmpty()
   @IsString()
   image?: string;
 
   @IsOptional()
+  @IsNotEmpty()
   @IsEnum(Category)
   category?: Category;
 }

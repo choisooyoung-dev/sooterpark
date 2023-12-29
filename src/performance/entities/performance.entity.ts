@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Category } from '../types/performanceCategory.type';
+import { Schedule } from 'src/schedule/entities/schedule.entity';
 
 @Entity({
   name: 'performance',
@@ -25,10 +26,6 @@ export class Performance {
 
   @Column({ type: 'varchar', nullable: false })
   location: string;
-
-  // 배열로 받아야하는디
-  @Column({ type: 'json', nullable: false })
-  schedule: string[];
 
   @Column({ type: 'varchar', nullable: false })
   image: string;
@@ -47,4 +44,7 @@ export class Performance {
 
   @OneToMany(() => Seat, (seat) => seat.id)
   seat: Seat[];
+
+  @OneToMany(() => Schedule, (schedule) => schedule.performance)
+  schedule: Schedule[];
 }

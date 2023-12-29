@@ -7,10 +7,10 @@ POST {{domain}}/user/register
 Content-Type: application/json
 
 {
-    "email": "ex07@gmail.com",
-    "name": "ex07",
-    "password": "qwerty07",
-    "role": 0
+    "email": "soo@gmail.com",
+    "name": "soo",
+    "password": "soo10",
+    "role": 1
 } 
 
 ###
@@ -20,13 +20,13 @@ POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "ex07@gmail.com",
-    "password": "qwerty07"
+    "email": "soo@gmail.com",
+    "password": "soo10"
 }   
 
 ###
 # 내 정보 조회
-GET {{domain}}/user/17
+GET {{domain}}/user/21
 Authorization: Bearer {{AccessToken}}
 
 ###

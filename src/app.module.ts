@@ -26,6 +26,8 @@ import { AuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { PointModule } from './point/point.module';
+import { ScheduleModule } from './schedule/schedule.module';
+import { Schedule } from './schedule/entities/schedule.entity';
 
 const typeOrmModuleOptions = {
   useFactory: async (
@@ -38,7 +40,7 @@ const typeOrmModuleOptions = {
     username: configService.get('DB_USERNAME'),
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_NAME'),
-    entities: [Payment, Performance, Point, Seat, User],
+    entities: [Payment, Performance, Point, Seat, User, Schedule],
     synchronize: configService.get('DB_SYNC'),
     logging: true,
   }),
@@ -67,6 +69,7 @@ const typeOrmModuleOptions = {
     SeatModule,
     PerformanceModule,
     AuthModule,
+    ScheduleModule,
   ],
   controllers: [AppController],
   providers: [AppService, AuthMiddleware],

@@ -21,8 +21,8 @@ POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "ex04@gmail.com",
-    "password": "qwerty04"
+    "email": "soo@gmail.com",
+    "password": "soo10"
 }   
  
 ###
@@ -37,12 +37,16 @@ Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "title": "뮤지컬 - 렌트",
-    "content": "렌트",
+    "title": "뮤지컬 - 레베카",
+    "content": "레베카",
     "location": "서울시",
-    "schedule": ["2023년 12월 28일 수요일 20시", "2023년 12월 28일 수요일 22시"],
+    "schedule": ["2023년 12월 30일 토요일 20시", "2023년 12월 31일 일요일 20시", "2023년 12월 31일 월요일 20시"],
     "image": "imageurl://urlurl",
-    "category":0
+    "category":0,
+     "times":1,
+      "date":"2023-12-29",
+      "start_at":"20:00",
+      "end_at":"22:00"
 } 
  
 ###
