@@ -9,6 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Grade } from '../types/seatGrade.type';
+import { Schedule } from 'src/schedule/entities/schedule.entity';
 
 @Entity({
   name: 'seat',
@@ -20,8 +22,8 @@ export class Seat {
   @Column({ type: 'int', nullable: false, unique: true })
   seat_num: number;
 
-  @Column({ type: 'varchar', nullable: false })
-  grade: string;
+  @Column({ type: 'enum', enum: Grade, nullable: false })
+  grade: Grade;
 
   @Column({ type: 'boolean', nullable: false })
   status: boolean;
@@ -46,4 +48,7 @@ export class Seat {
 
   @ManyToOne(() => Payment, (payment) => payment.id)
   payment: Payment;
+
+  @ManyToOne(() => Schedule, (schedule) => schedule.seats)
+  schedule: Schedule;
 }
