@@ -33,6 +33,9 @@ export class Performance {
   @Column({ type: 'enum', enum: Category, default: Category.Musical })
   category: Category;
 
+  @Column({ type: 'int', nullable: false })
+  price: number;
+
   @CreateDateColumn()
   created_at: Date;
 

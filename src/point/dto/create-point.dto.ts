@@ -8,18 +8,18 @@ export class CreatePointDto {
   seat_id: number;
 
   @Column()
-  income: number;
+  deposit: number;
 
   @Column()
-  outcome: number;
+  withdraw: number;
 
   @Column({ default: 1000000 }) // 기본값 설정
-  total: number;
+  balance: number;
 
   @BeforeInsert()
   setDefaultValues() {
-    if (this.total === undefined) {
-      this.total = 1000000;
+    if (this.balance === undefined) {
+      this.balance = 1000000;
     }
   }
 }

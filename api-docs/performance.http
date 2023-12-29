@@ -37,26 +37,25 @@ Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "title": "뮤지컬 - 레베카",
-    "content": "레베카",
+    "title": "뮤지컬 - 오페라의 유령",
+    "content": "오페라의 유령",
     "location": "서울시",
-    "schedule": ["2023년 12월 30일 토요일 20시", "2023년 12월 31일 일요일 20시", "2023년 12월 31일 월요일 20시"],
     "image": "imageurl://urlurl",
     "category":0,
-     "times":1,
-      "date":"2023-12-29",
-      "start_at":"20:00",
-      "end_at":"22:00"
+    "period":"2023-12-29 ~ 2024-02-25",
+    "price": 10000,
+    "start_at":"23:00",
+    "end_at":"01:00"
 } 
  
 ###
 # 공연 수정 - Admin
-PATCH  {{domain}}/performance/9
+PATCH  {{domain}}/performance/schedule/5
 Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "schedule": ["2023년 12월 28일 수요일 22시", "2023년 12월 28일 수요일 23시"]
+    "period": "2023-12-29 ~ 2024-03-03"
 }
 
 ###

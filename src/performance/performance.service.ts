@@ -61,15 +61,14 @@ export class PerformanceService {
     await queryRunner.startTransaction();
 
     try {
-      const { times, date, start_at, end_at } = createScheduleDto;
+      const { period, start_at, end_at } = createScheduleDto;
       const newPerformance =
         await this.performanceRepository.save(createPerformanceDto);
       const id: any = newPerformance.id;
       // console.log('id => ', id);
       const newSchedule = await this.scheduleRepository.save({
         performance: id,
-        times,
-        date,
+        period,
         start_at,
         end_at,
       });
@@ -89,37 +88,55 @@ export class PerformanceService {
   }
 
   async update(id: number, updatePerformanceDto: UpdatePerformanceDto) {
-    const existingPerformance = await this.performanceRepository.findOne({
-      where: { id, deleted_at: null },
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const existingPerformance = await this.performanceRepository.findOne({
+        where: { id, deleted_at: null },
+      });
 
-    if (!existingPerformance) {
-      throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+      if (!existingPerformance) {
+        throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+      }
+
+      const updatedPerformance = await this.performanceRepository.update(
+        id,
+        updatePerformanceDto,
+      );
+      await queryRunner.commitTransaction();
+      return {
+        success: true,
+        message: '공연 정보 수정 완료',
+        updatedPerformance,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
-
-    const updatedPerformance = await this.performanceRepository.update(
-      id,
-      updatePerformanceDto,
-    );
-
-    return {
-      success: true,
-      message: '공연 수정 완료',
-      updatedPerformance,
-    };
   }
 
   async remove(id: number) {
-    const existingPerformance = await this.performanceRepository.findOne({
-      where: { id, deleted_at: null },
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const existingPerformance = await this.performanceRepository.findOne({
+        where: { id, deleted_at: null },
+      });
 
-    if (!existingPerformance) {
-      throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+      if (!existingPerformance) {
+        throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
+      }
+
+      await this.performanceRepository.softDelete(id);
+      await queryRunner.commitTransaction();
+      return { success: true, message: '삭제 완료되었습니다.' };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
-
-    await this.performanceRepository.softDelete(id);
-
-    return { success: true, message: '삭제 완료되었습니다.' };
   }
 }

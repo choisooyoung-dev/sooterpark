@@ -1,13 +1,9 @@
-import { IsNotEmpty, IsString, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateScheduleDto {
-  @IsNotEmpty({ message: '공연 회차를 입력해주세요.' })
-  @IsNumber()
-  times: number;
-
-  @IsNotEmpty({ message: '공연 날짜를 입력해주세요.' })
+  @IsNotEmpty({ message: '공연 기간을 입력해주세요.' })
   @IsString()
-  date: string;
+  period: string;
 
   @IsNotEmpty({ message: '공연 시작 시간을 입력해주세요.' })
   @IsString()

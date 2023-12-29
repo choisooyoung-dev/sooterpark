@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { Category } from '../types/performanceCategory.type';
 
 export class CreatePerformanceDto {
@@ -20,4 +20,8 @@ export class CreatePerformanceDto {
 
   @IsEnum(Category)
   category: Category;
+
+  @IsNumber()
+  @IsNotEmpty({ message: '스탠다드석 가격을 입력해주세요.' })
+  price: number;
 }

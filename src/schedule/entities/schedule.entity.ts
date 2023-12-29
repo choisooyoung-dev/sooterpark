@@ -15,11 +15,8 @@ export class Schedule {
   @PrimaryGeneratedColumn({ name: 'schedule_id' })
   id: number;
 
-  @Column({ type: 'int', nullable: false })
-  times: number;
-
   @Column({ type: 'varchar', nullable: false })
-  date: string;
+  period: string;
 
   @Column({ type: 'varchar', nullable: false })
   start_at: string;

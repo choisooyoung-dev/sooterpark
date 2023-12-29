@@ -15,13 +15,13 @@ export class Point {
   id: number;
 
   @Column({ type: 'int', nullable: false })
-  income: number;
+  deposit: number;
 
   @Column({ type: 'int', nullable: false })
-  outcome: number;
+  withdraw: number;
 
   @Column({ type: 'int', nullable: false, default: 1000000 })
-  total: number;
+  balance: number;
 
   // @ManyToOne(() => Seat, (seat) => seat.id)
   // @JoinColumn({ name: 'seat_id' })
