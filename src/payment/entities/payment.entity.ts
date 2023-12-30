@@ -31,11 +31,11 @@ export class Payment {
   @Column({ type: 'int', nullable: false })
   performance_id: number;
 
-  @Column({ type: 'boolean', nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: false })
   status: string;
 
   @Column({ type: 'int', nullable: false })
-  total_price: string;
+  total_price: number;
 
   @CreateDateColumn()
   created_at: Date;
@@ -47,5 +47,5 @@ export class Payment {
   deleted_at?: Date;
 
   @OneToMany(() => Seat, (seat) => seat.id)
-  seats: Seat[];
+  seat: Seat[];
 }

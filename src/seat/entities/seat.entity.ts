@@ -25,11 +25,11 @@ export class Seat {
   @Column({ type: 'enum', enum: Grade, nullable: false })
   grade: Grade;
 
-  @Column({ type: 'boolean', nullable: false })
-  status: boolean;
+  // @Column({ type: 'boolean', nullable: false })
+  // status: boolean;
 
-  @Column({ type: 'int', nullable: false })
-  price: number;
+  // @Column({ type: 'int', nullable: false })
+  // price: number;
 
   @Column({ type: 'int', nullable: false })
   performance_id: number;

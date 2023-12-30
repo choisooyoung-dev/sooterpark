@@ -32,9 +32,11 @@ export class PerformanceService {
     if (_.isNaN(id)) {
       throw new BadRequestException('공연 ID가 잘못되었습니다.');
     }
-    const performance = await this.performanceRepository.findOne({
-      where: { id, deleted_at: null },
-    });
+    const performance = await this.performanceRepository
+      .createQueryBuilder('performance')
+      .leftJoinAndSelect('performance.schedule', 'schedule')
+      .where({ id })
+      .getOne();
 
     if (!performance) {
       throw new NotFoundException('찾을 수 없는 공연 ID 입니다.');
@@ -61,14 +63,14 @@ export class PerformanceService {
     await queryRunner.startTransaction();
 
     try {
-      const { period, start_at, end_at } = createScheduleDto;
+      const { date, start_at, end_at } = createScheduleDto;
       const newPerformance =
         await this.performanceRepository.save(createPerformanceDto);
       const id: any = newPerformance.id;
       // console.log('id => ', id);
       const newSchedule = await this.scheduleRepository.save({
         performance: id,
-        period,
+        date,
         start_at,
         end_at,
       });

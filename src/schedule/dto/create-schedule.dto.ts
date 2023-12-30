@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateScheduleDto {
   @IsNotEmpty({ message: '공연 기간을 입력해주세요.' })
   @IsString()
-  period: string;
+  date: string;
 
   @IsNotEmpty({ message: '공연 시작 시간을 입력해주세요.' })
   @IsString()

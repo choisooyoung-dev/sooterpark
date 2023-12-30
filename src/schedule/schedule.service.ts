@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Schedule } from './entities/schedule.entity';
 import { DataSource, Repository } from 'typeorm';
+import { CreateScheduleDto } from './dto/create-schedule.dto';
 
 @Injectable()
 export class ScheduleService {
@@ -12,9 +12,31 @@ export class ScheduleService {
     private scheduleRepository: Repository<Schedule>,
     private dataSource: DataSource,
   ) {}
-  // create(createScheduleDto: CreateScheduleDto) {
-  //   return 'This action adds a new schedule';
-  // }
+  async create(performance_id: any, createScheduleDto: CreateScheduleDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      // const matchSchedule = await this.scheduleRepository.find({
+      //   where: { performance: performance_id },
+      // });
+
+      // console.log('matchSchedule: ', matchSchedule);
+      const { date, start_at, end_at } = createScheduleDto;
+      const createdSchedule = await this.scheduleRepository.save({
+        performance: performance_id,
+        date,
+        start_at,
+        end_at,
+      });
+      await queryRunner.commitTransaction();
+      return { success: true, message: '스케줄 추가', createdSchedule };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
+    }
+  }
 
   findAll() {
     return `This action returns all schedule`;

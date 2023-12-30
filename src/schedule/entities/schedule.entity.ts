@@ -16,7 +16,7 @@ export class Schedule {
   id: number;
 
   @Column({ type: 'varchar', nullable: false })
-  period: string;
+  date: string;
 
   @Column({ type: 'varchar', nullable: false })
   start_at: string;

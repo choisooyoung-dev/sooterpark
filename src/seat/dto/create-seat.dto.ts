@@ -1,7 +1,12 @@
-import { IsDate, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
+import { Grade } from '../types/seatGrade.type';
 
 export class CreateSeatDto {
-  @IsDate()
-  @IsNotEmpty({ message: '공연 날짜를 입력해주세요.' })
-  date: Date;
+  @IsNumber()
+  @IsNotEmpty({ message: '좌석을 선택해주세요.' })
+  seat_num: number;
+
+  @IsEnum(Grade)
+  @IsNotEmpty({ message: '등급을 선택해주세요.' })
+  grade: Grade;
 }
