@@ -34,6 +34,8 @@ export class PaymentService {
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
+    // 동시성 처리
+    await queryRunner.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
     await queryRunner.startTransaction();
     try {
       // const { total_price } = createPaymentDto;
