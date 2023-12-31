@@ -38,9 +38,9 @@ export class UserService {
 
     await this.pointRepository.save({
       user: newUser, // User 엔터티와 관계 설정
-      income: 0,
-      outcome: 0,
-      total: 1000000,
+      deposit: 0,
+      withdraw: 0,
+      balance: 1000000,
     });
 
     const payload = { email: newUser.email };
@@ -112,6 +112,12 @@ export class UserService {
         email: req.user.email,
         name: req.user.name,
         password: hashedNaverPassword,
+      });
+      await this.pointRepository.save({
+        user: OAuthUser, // User 엔터티와 관계 설정
+        deposit: 0,
+        withdraw: 0,
+        balance: 1000000,
       });
     }
     const email = req.user.email;

@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Seat } from 'src/seat/entities/seat.entity';
+import { Point } from 'src/point/entities/point.entity';
 
 @Entity({
   name: 'payment',
@@ -25,14 +26,14 @@ export class Payment {
   @Column({ type: 'int', nullable: false })
   user_id: number;
 
-  @ManyToOne(() => Performance, (performance) => performance.id)
+  @ManyToOne(() => Performance, (performance) => performance.payment)
   performance: Performance;
 
-  @Column({ type: 'int', nullable: false })
-  performance_id: number;
+  // @Column({ type: 'int', nullable: false })
+  // performance_id: number;
 
-  @Column({ type: 'boolean', nullable: false, default: false })
-  status: string;
+  // @Column({ type: 'boolean', nullable: false, default: false })
+  // status: string;
 
   @Column({ type: 'int', nullable: false })
   total_price: number;
@@ -46,6 +47,9 @@ export class Payment {
   @DeleteDateColumn()
   deleted_at?: Date;
 
-  @OneToMany(() => Seat, (seat) => seat.id)
+  @OneToMany(() => Seat, (seat) => seat.id, { cascade: true })
   seat: Seat[];
+
+  @OneToMany(() => Point, (point) => point.user)
+  point: Point[];
 }

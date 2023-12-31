@@ -22,6 +22,18 @@ export class CreatePerformanceDto {
   category: Category;
 
   @IsNumber()
-  @IsNotEmpty({ message: '스탠다드석 가격을 입력해주세요.' })
+  @IsNotEmpty({ message: '기본 가격(STANDARD석 가격)을 입력해주세요.' })
   price: number;
+
+  // @IsNumber()
+  // @IsNotEmpty({ message: 'VIP석 좌석수를 입력해주세요.' })
+  // vip_seat_limit: number;
+
+  // @IsNumber()
+  // @IsNotEmpty({ message: 'STANDARD석 좌석수를 입력해주세요.' })
+  // standard_seat_limit: number;
+
+  // @IsNumber()
+  // @IsNotEmpty({ message: 'ROYAL석 좌석수를 입력해주세요.' })
+  // royal_seat_limit: number;
 }

@@ -48,6 +48,6 @@ export class User {
   @OneToMany(() => Point, (point) => point.user)
   points: Point[];
 
-  @OneToMany(() => Seat, (seat) => seat.id)
-  seats: Seat[];
+  @OneToMany(() => Seat, (seat) => seat.user)
+  seat: Seat[];
 }

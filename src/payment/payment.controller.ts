@@ -6,6 +6,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -22,12 +23,14 @@ export class PaymentController {
   @Post('create/:performance_id')
   create(
     @UserInfo() user: any,
-    @Body() performance_id: string,
+    @Param('performance_id') performance_id: string,
+    @Body('schedule_id') schedule_id: number,
     @Body() createPaymentDto: CreatePaymentDto,
     @Body() createSeatDto: CreateSeatDto,
   ) {
     return this.paymentService.create(
       user,
+      schedule_id,
       +performance_id,
       createPaymentDto,
       createSeatDto,

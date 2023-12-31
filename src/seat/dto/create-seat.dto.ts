@@ -1,12 +1,18 @@
-import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
 import { Grade } from '../types/seatGrade.type';
 
 export class CreateSeatDto {
-  @IsNumber()
-  @IsNotEmpty({ message: '좌석을 선택해주세요.' })
-  seat_num: number;
+  // @IsNotEmpty({ message: '좌석 금ㅇ를 입력해주세요.' })
+  // @IsNumber()
+  // seat_price: number;
 
-  @IsEnum(Grade)
-  @IsNotEmpty({ message: '등급을 선택해주세요.' })
-  grade: Grade;
+  @IsNotEmpty({ message: '좌석 정보를 입력해주세요.' })
+  @IsArray()
+  seats: { grade: Grade; seat_num: number }[];
+
+  // @IsNumber()
+  // seat_num: number;
+
+  // @IsEnum(Grade)
+  // grade: Grade;
 }

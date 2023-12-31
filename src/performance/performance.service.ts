@@ -63,7 +63,14 @@ export class PerformanceService {
     await queryRunner.startTransaction();
 
     try {
-      const { date, start_at, end_at } = createScheduleDto;
+      const {
+        date,
+        start_at,
+        end_at,
+        vip_seat_limit,
+        royal_seat_limit,
+        standard_seat_limit,
+      } = createScheduleDto;
       const newPerformance =
         await this.performanceRepository.save(createPerformanceDto);
       const id: any = newPerformance.id;
@@ -73,6 +80,9 @@ export class PerformanceService {
         date,
         start_at,
         end_at,
+        vip_seat_limit,
+        royal_seat_limit,
+        standard_seat_limit,
       });
 
       await queryRunner.commitTransaction();
@@ -102,17 +112,14 @@ export class PerformanceService {
         throw new NotFoundException('해당하는 공연을 찾을 수 없습니다.');
       }
 
-      const updatedPerformance = await this.performanceRepository.update(
-        id,
-        updatePerformanceDto,
-      );
+      await this.performanceRepository.update(id, updatePerformanceDto);
       await queryRunner.commitTransaction();
       return {
         success: true,
         message: '공연 정보 수정 완료',
-        updatedPerformance,
       };
     } catch (error) {
+      // console.log(error);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();

@@ -9,6 +9,7 @@ import { Performance } from 'src/performance/entities/performance.entity';
 import { Seat } from 'src/seat/entities/seat.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Point } from 'src/point/entities/point.entity';
+import { Payment } from './entities/payment.entity';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { Point } from 'src/point/entities/point.entity';
       User,
       Point,
       Schedule,
+      Payment,
     ]),
   ],
   controllers: [PaymentController],

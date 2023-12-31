@@ -8,11 +8,11 @@ GET {{domain}}/performance
 
 ###
 # 공연 검색 조회
-GET {{domain}}/performance/search?keyword=렌트
+GET {{domain}}/performance/search?keyword=오페라
 
 ###
 # 공연 상세 조회
-GET {{domain}}/performance/9
+GET {{domain}}/performance/19
 
 ###
 # 로그인
@@ -21,8 +21,8 @@ POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "soo@gmail.com",
-    "password": "soo10"
+    "email": "ooo@gmail.com",
+    "password": "ooo11"
 }   
  
 ###
@@ -37,28 +37,46 @@ Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "title": "뮤지컬 - 오페라의 유령",
-    "content": "오페라의 유령",
+    "title": "뮤지컬 - 맘마미아",
+    "content": "맘마미아",
     "location": "서울시",
     "image": "imageurl://urlurl",
     "category":0,
-    "period":"2023-12-29 ~ 2024-02-25",
+    "date":"2023-12-29 ~ 2024-02-25",
     "price": 10000,
     "start_at":"23:00",
-    "end_at":"01:00"
-} 
+    "end_at":"01:00",
+    "vip_seat_limit": 50,
+    "royal_seat_limit": 50,
+    "standard_seat_limit": 50
+}  
  
 ###
 # 공연 수정 - Admin
-PATCH  {{domain}}/performance/schedule/5
+PATCH  {{domain}}/performance/21
 Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "period": "2023-12-29 ~ 2024-03-03"
+    "royal_seat_limit": 100
 }
 
 ###
 # 공연 삭제 - Admin
 DELETE {{domain}}/performance/8
 Authorization: Bearer {{AccessToken}}
+
+###
+# 공연 스케줄 추가
+POST {{domain}}/performance/schedule/create/28
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+    "date": "2023-12-29 ~ 2024-02-25",
+    "start_at": "19:30",
+    "end_at": "20:30",
+    "vip_seat_limit": 50,
+    "royal_seat_limit": 50,
+    "standard_seat_limit": 50
+}

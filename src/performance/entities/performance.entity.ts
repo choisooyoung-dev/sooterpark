@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Category } from '../types/performanceCategory.type';
 import { Schedule } from 'src/schedule/entities/schedule.entity';
+import { Payment } from 'src/payment/entities/payment.entity';
 
 @Entity({
   name: 'performance',
@@ -30,11 +31,25 @@ export class Performance {
   @Column({ type: 'varchar', nullable: false })
   image: string;
 
-  @Column({ type: 'enum', enum: Category, default: Category.Musical })
+  @Column({
+    type: 'enum',
+    enum: Category,
+    default: Category.Musical,
+    nullable: false,
+  })
   category: Category;
 
   @Column({ type: 'int', nullable: false })
   price: number;
+
+  // @Column({ type: 'int', nullable: false })
+  // vip_seat_limit: number;
+
+  // @Column({ type: 'int', nullable: false })
+  // royal_seat_limit: number;
+
+  // @Column({ type: 'int', nullable: false })
+  // standard_seat_limit: number;
 
   @CreateDateColumn()
   created_at: Date;
@@ -45,9 +60,12 @@ export class Performance {
   @DeleteDateColumn()
   deleted_at?: Date;
 
-  @OneToMany(() => Seat, (seat) => seat.id)
+  @OneToMany(() => Seat, (seat) => seat.performance)
   seat: Seat[];
 
   @OneToMany(() => Schedule, (schedule) => schedule.performance)
   schedule: Schedule[];
+
+  @OneToMany(() => Payment, (payment) => payment.performance)
+  payment: Payment[];
 }

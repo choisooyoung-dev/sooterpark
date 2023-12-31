@@ -24,6 +24,15 @@ export class Schedule {
   @Column({ type: 'varchar', nullable: false })
   end_at: string;
 
+  @Column({ type: 'int', nullable: false })
+  vip_seat_limit: number;
+
+  @Column({ type: 'int', nullable: false })
+  royal_seat_limit: number;
+
+  @Column({ type: 'int', nullable: false })
+  standard_seat_limit: number;
+
   @OneToMany(() => Seat, (seat) => seat.schedule)
   seats: Seat[];
 

@@ -1,3 +1,4 @@
+import { Payment } from 'src/payment/entities/payment.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -23,11 +24,10 @@ export class Point {
   @Column({ type: 'int', nullable: false, default: 1000000 })
   balance: number;
 
-  // @ManyToOne(() => Seat, (seat) => seat.id)
-  // @JoinColumn({ name: 'seat_id' })
-  // seat: Seat;
-
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @ManyToOne(() => Payment, (payment) => payment.id)
+  payment: Payment;
 }

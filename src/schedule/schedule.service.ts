@@ -17,17 +17,22 @@ export class ScheduleService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      // const matchSchedule = await this.scheduleRepository.find({
-      //   where: { performance: performance_id },
-      // });
-
-      // console.log('matchSchedule: ', matchSchedule);
-      const { date, start_at, end_at } = createScheduleDto;
+      const {
+        date,
+        start_at,
+        end_at,
+        vip_seat_limit,
+        royal_seat_limit,
+        standard_seat_limit,
+      } = createScheduleDto;
       const createdSchedule = await this.scheduleRepository.save({
         performance: performance_id,
         date,
         start_at,
         end_at,
+        vip_seat_limit,
+        royal_seat_limit,
+        standard_seat_limit,
       });
       await queryRunner.commitTransaction();
       return { success: true, message: '스케줄 추가', createdSchedule };
@@ -68,8 +73,4 @@ export class ScheduleService {
       await queryRunner.release();
     }
   }
-
-  // async remove(id: number) {
-  //   return `This action removes a #${id} schedule`;
-  // }
 }

@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Grade } from '../types/seatGrade.type';
 import { Schedule } from 'src/schedule/entities/schedule.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity({
   name: 'seat',
@@ -19,20 +20,14 @@ export class Seat {
   @PrimaryGeneratedColumn({ name: 'seat_id' })
   id: number;
 
-  @Column({ type: 'int', nullable: false, unique: true })
+  @Column({ type: 'int', nullable: false })
   seat_num: number;
 
-  @Column({ type: 'enum', enum: Grade, nullable: false })
+  @Column({ type: 'enum', enum: Grade })
   grade: Grade;
 
-  // @Column({ type: 'boolean', nullable: false })
-  // status: boolean;
-
-  // @Column({ type: 'int', nullable: false })
-  // price: number;
-
   @Column({ type: 'int', nullable: false })
-  performance_id: number;
+  seat_price: number;
 
   @CreateDateColumn()
   created_at: Date;
@@ -43,12 +38,23 @@ export class Seat {
   @DeleteDateColumn()
   deleted_at?: Date;
 
-  @ManyToOne(() => Performance, (performance) => performance.id)
+  @ManyToOne(() => Performance, (performance) => performance.seat, {
+    nullable: false,
+  })
   performance: Performance;
 
-  @ManyToOne(() => Payment, (payment) => payment.id)
+  @ManyToOne(() => Payment, (payment) => payment.id, {
+    nullable: false,
+  })
   payment: Payment;
 
-  @ManyToOne(() => Schedule, (schedule) => schedule.seats)
+  @ManyToOne(() => Schedule, (schedule) => schedule.seats, {
+    nullable: false,
+  })
   schedule: Schedule;
+
+  @ManyToOne(() => User, (user) => user.seat, {
+    nullable: false,
+  })
+  user: User;
 }

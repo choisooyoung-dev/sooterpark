@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateScheduleDto {
   @IsOptional()
@@ -15,4 +15,19 @@ export class UpdateScheduleDto {
   @IsNotEmpty()
   @IsString()
   end_at?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
+  vip_seat_limit?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
+  royal_seat_limit?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsNumber()
+  standard_seat_limit?: number;
 }
