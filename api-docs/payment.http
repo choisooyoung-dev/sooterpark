@@ -18,8 +18,8 @@ POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "soo@gmail.com",
-    "password": "soo00"
+    "email": "sss@gmail.com",
+    "password": "sss33"
 } 
 
 ###
@@ -42,12 +42,12 @@ Content-Type: application/json
 {
     "seats":[
         {
-            "grade": "V",
-            "seat_num": 113
+            "grade": "R",
+            "seat_num": 133
         },
         {
-            "grade": "V",
-            "seat_num": 114
+            "grade": "R",
+            "seat_num": 134
         }
     ],
     "schedule_id":27

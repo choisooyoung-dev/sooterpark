@@ -29,15 +29,6 @@ export class Payment {
   @ManyToOne(() => Performance, (performance) => performance.payment)
   performance: Performance;
 
-  // @Column({ type: 'int', nullable: false })
-  // performance_id: number;
-
-  // @Column({ type: 'boolean', nullable: false, default: false })
-  // status: string;
-
-  @Column({ type: 'int', nullable: false })
-  total_price: number;
-
   @CreateDateColumn()
   created_at: Date;
 
