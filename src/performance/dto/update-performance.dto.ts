@@ -1,10 +1,4 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Category } from '../types/performanceCategory.type';
 
 export class UpdatePerformanceDto {
@@ -32,19 +26,4 @@ export class UpdatePerformanceDto {
   @IsNotEmpty()
   @IsEnum(Category)
   category?: Category;
-
-  // @IsOptional()
-  // @IsNotEmpty()
-  // @IsNumber()
-  // vip_seat_limit?: number;
-
-  // @IsOptional()
-  // @IsNotEmpty()
-  // @IsNumber()
-  // royal_seat_limit?: number;
-
-  // @IsOptional()
-  // @IsNotEmpty()
-  // @IsNumber()
-  // standard_seat_limit?: number;
 }

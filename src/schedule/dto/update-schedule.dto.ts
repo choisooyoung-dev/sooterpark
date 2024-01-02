@@ -4,7 +4,12 @@ export class UpdateScheduleDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  date?: string;
+  start_date?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsString()
+  end_date?: string;
 
   @IsOptional()
   @IsNotEmpty()

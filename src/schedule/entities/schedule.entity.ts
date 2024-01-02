@@ -16,13 +16,16 @@ export class Schedule {
   id: number;
 
   @Column({ type: 'varchar', nullable: false })
-  date: string;
+  start_date: string;
 
   @Column({ type: 'varchar', nullable: false })
-  start_at: string;
+  end_date: string;
 
-  @Column({ type: 'varchar', nullable: false })
-  end_at: string;
+  @Column({ type: 'timestamp', nullable: false })
+  start_at: Date;
+
+  @Column({ type: 'timestamp', nullable: false })
+  end_at: Date;
 
   @Column({ type: 'int', nullable: false })
   vip_seat_limit: number;

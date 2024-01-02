@@ -34,9 +34,9 @@ export class PerformanceController {
   }
 
   // 특정 공연 조회
-  @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.performanceService.getOne(+id);
+  @Get(':performance_id')
+  getOne(@Param('performance_id') performance_id: string) {
+    return this.performanceService.getOne(+performance_id);
   }
 
   // 공연 등록 - Admin

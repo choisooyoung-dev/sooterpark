@@ -12,6 +12,7 @@ import {
 } from 'typeorm';
 import { Seat } from 'src/seat/entities/seat.entity';
 import { Point } from 'src/point/entities/point.entity';
+import { paymentStatus } from '../types/paymentStatus.types';
 
 @Entity({
   name: 'payment',
@@ -25,6 +26,9 @@ export class Payment {
 
   @Column({ type: 'int', nullable: false })
   user_id: number;
+
+  @Column({ type: 'enum', enum: paymentStatus, nullable: false })
+  status: paymentStatus;
 
   @ManyToOne(() => Performance, (performance) => performance.payment)
   performance: Performance;

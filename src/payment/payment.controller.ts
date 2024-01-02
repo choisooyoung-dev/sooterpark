@@ -12,16 +12,22 @@ import { CreatePaymentDto } from './dto/create-payment.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { CreateSeatDto } from 'src/seat/dto/create-seat.dto';
+import { User } from 'src/user/entities/user.entity';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
+  // 예매 전체 조회
+  @Get('/all/:user_id')
+  findAll(@UserInfo() user: User, @Param('user_id') user_id: string) {
+    return this.paymentService.findAll(user, +user_id);
+  }
   // 공연 예매
   @Post('create/:performance_id')
   create(
-    @UserInfo() user: any,
+    @UserInfo() user: User,
     @Param('performance_id') performance_id: string,
     @Body('schedule_id') schedule_id: number,
     @Body() createPaymentDto: CreatePaymentDto,
@@ -36,12 +42,6 @@ export class PaymentController {
     );
   }
 
-  // 예매 전체 조회
-  @Get(':/user_id')
-  findAll() {
-    return this.paymentService.findAll();
-  }
-
   // 예매 특정 조회
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -49,8 +49,8 @@ export class PaymentController {
   }
 
   // 예매 취소
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentService.remove(+id);
+  @Delete(':paymentId')
+  remove(@UserInfo() user: User, @Param('paymentId') paymentId: string) {
+    return this.paymentService.remove(user, +paymentId);
   }
 }

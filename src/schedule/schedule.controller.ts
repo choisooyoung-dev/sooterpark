@@ -25,8 +25,13 @@ export class ScheduleController {
   create(
     @Param('performance_id') performance_id: string,
     @Body() createScheduleDto: CreateScheduleDto,
+    @Body('targetDate') targetDate: string,
   ) {
-    return this.scheduleService.create(+performance_id, createScheduleDto);
+    return this.scheduleService.create(
+      +performance_id,
+      createScheduleDto,
+      targetDate,
+    );
   }
 
   @Get()

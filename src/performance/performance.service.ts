@@ -28,15 +28,42 @@ export class PerformanceService {
     });
   }
 
-  async getOne(id: number) {
-    if (_.isNaN(id)) {
+  async getOne(performance_id: number) {
+    if (_.isNaN(performance_id)) {
       throw new BadRequestException('공연 ID가 잘못되었습니다.');
     }
     const performance = await this.performanceRepository
       .createQueryBuilder('performance')
       .leftJoinAndSelect('performance.schedule', 'schedule')
-      .where({ id })
+      .leftJoinAndSelect('schedule.seats', 'seats')
+      .where({ id: performance_id })
       .getOne();
+
+    console.log('performance: ', performance);
+    for (let i = 0; i < performance.schedule.length; i++) {
+      let remainingVipSeats =
+        performance.schedule[i].vip_seat_limit -
+        performance.schedule[i].seats.filter((s) => s.grade === 'V').length;
+
+      let remainingRoyalSeats =
+        performance.schedule[i].royal_seat_limit -
+        performance.schedule[i].seats.filter((s) => s.grade === 'R').length;
+
+      let remainingStandardSeats =
+        performance.schedule[i].standard_seat_limit -
+        performance.schedule[i].seats.filter((s) => s.grade === 'S').length;
+
+      // 스케줄별 남은 자리가 0일 때 예매 불가
+      if (
+        remainingVipSeats === 0 &&
+        remainingRoyalSeats === 0 &&
+        remainingStandardSeats === 0
+      ) {
+        throw new Error('매진되었습니다.');
+      }
+
+      return { remainingVipSeats, remainingRoyalSeats, remainingStandardSeats };
+    }
 
     if (!performance) {
       throw new NotFoundException('찾을 수 없는 공연 ID 입니다.');
@@ -64,7 +91,8 @@ export class PerformanceService {
 
     try {
       const {
-        date,
+        start_date,
+        end_date,
         start_at,
         end_at,
         vip_seat_limit,
@@ -77,9 +105,10 @@ export class PerformanceService {
       // console.log('id => ', id);
       const newSchedule = await this.scheduleRepository.save({
         performance: id,
-        date,
-        start_at,
-        end_at,
+        start_date,
+        end_date,
+        start_at: `${start_date} ${start_at}`,
+        end_at: `${start_date} ${end_at}`,
         vip_seat_limit,
         royal_seat_limit,
         standard_seat_limit,

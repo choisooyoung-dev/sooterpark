@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seat } from 'src/seat/entities/seat.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -9,6 +8,7 @@ import { CreateSeatDto } from './../seat/dto/create-seat.dto';
 import { Payment } from './entities/payment.entity';
 import { Schedule } from 'src/schedule/entities/schedule.entity';
 import { Point } from 'src/point/entities/point.entity';
+import { paymentStatus } from './types/paymentStatus.types';
 
 @Injectable()
 export class PaymentService {
@@ -34,20 +34,14 @@ export class PaymentService {
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
-    // 동시성 처리
-    await queryRunner.query('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
-    await queryRunner.startTransaction();
+    // 동시성 처리 - 격리 수준 READ COMMITTED
+    await queryRunner.startTransaction('READ COMMITTED');
     try {
       const { seats } = createSeatDto;
 
       // 유저가 선택한 공연
       const targetPerformance = await this.performanceRepository.findOne({
         where: { id: +performance_id },
-      });
-
-      // 유저가 선택한 공연 스케줄
-      const targetSchedule = await this.scheduleRepository.find({
-        where: { performance: { id: +performance_id } },
       });
 
       const getSheduleWithId = await this.scheduleRepository.find({
@@ -59,15 +53,32 @@ export class PaymentService {
         where: { schedule: { id: +schedule_id } },
       });
 
+      console.log('getSheduleWithId: ', getSheduleWithId);
+
       if (!targetPerformance) {
         // targetPerformance가 null인 경우 예외 처리
         throw new Error('해당하는 공연이 없습니다.');
+      }
+
+      // 스케줄 시간
+      const scheduleStartAt = getSheduleWithId[0].start_at;
+      // 현재 시간
+      const nowDate = new Date();
+
+      const timeDifference = scheduleStartAt - nowDate;
+      console.log('timeDifference: ', timeDifference);
+      const hoursDifference = timeDifference / (1000 * 60 * 60);
+      console.log('hoursDifference: ', hoursDifference);
+
+      if (hoursDifference <= 0) {
+        throw new Error('공연 시작 시간 이후로는 예매 불가');
       }
 
       // 결제 생성
       const newPayment = await queryRunner.manager.save(Payment, {
         performance: { id: +performance_id },
         user_id: user.id,
+        status: paymentStatus.SUCCESS,
       });
 
       // 등급별 좌석 금액
@@ -103,7 +114,7 @@ export class PaymentService {
         });
 
         if (reservedSeat !== null) {
-          throw new Error();
+          throw new Error('이미 예약된 좌석');
           // return { success: false, message: '이미 예약된 좌석입니다.' };
         }
 
@@ -125,7 +136,7 @@ export class PaymentService {
       // 가장 최신의 포인트 상태 가져오기
       const lastPoint = await queryRunner.manager.find(Point, {
         where: { user: { id: user.id } },
-        order: { id: 'DESC' },
+        order: { created_at: 'DESC' },
         take: 1,
       });
 
@@ -152,20 +163,135 @@ export class PaymentService {
   }
 
   // 예매 목록 확인
-  findAll() {
-    return `This action returns all payment`;
+  async findAll(user: any, user_id: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    // 동시성 처리 - 격리 수준 READ COMMITTED
+    await queryRunner.startTransaction('READ COMMITTED');
+    try {
+      const allPayment = await queryRunner.manager.find(Payment, {
+        where: {
+          user: { id: user_id },
+        },
+        order: { created_at: 'DESC' },
+        relations: ['performance'],
+      });
+
+      //console.log('allPayment ======> ', allPayment);
+      await queryRunner.commitTransaction();
+      return { allPayment };
+    } catch (error) {
+      // 롤백 시에 실행할 코드 (예: 로깅)
+      console.error('Error during reservation:', error);
+      await queryRunner.rollbackTransaction();
+      return { status: 404, message: '취소 오류입니다.' };
+    } finally {
+      // 사용이 끝난 후에는 항상 queryRunner를 해제
+      await queryRunner.release();
+    }
   }
 
   findOne(id: number) {
     return `This action returns a #${id} payment`;
   }
 
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    return `This action updates a #${id} payment`;
-  }
-
   // 예매 취소
-  remove(id: number) {
-    return `This action removes a #${id} payment`;
+  async remove(user: any, paymentId: number) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    // 동시성 처리 - 격리 수준 READ COMMITTED
+    await queryRunner.startTransaction('READ COMMITTED');
+
+    const userId = user.id;
+
+    try {
+      // 공연 3시간 전?
+      // 스케줄 가져오기
+      const targetPayment = await queryRunner.manager.find(Seat, {
+        where: { payment: { id: paymentId } },
+        relations: ['schedule', 'user'],
+      });
+
+      const paymentUser = targetPayment[0].user.id;
+
+      // 유저 확인
+      if (paymentUser !== user.id) {
+        throw new Error('권한이 없습니다.');
+      }
+
+      console.log('targetPayment: ', targetPayment);
+      // 스케줄 시간
+      const scheduleStartAt = targetPayment[0].schedule.start_at;
+      // 현재 시간
+      const nowDate = new Date();
+
+      const timeDifference = scheduleStartAt - nowDate;
+      const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+      if (hoursDifference <= 3) {
+        throw new Error('공연 시간 3시간 전 예매 취소 불가');
+      }
+
+      //  좌석 삭제
+      await queryRunner.manager.delete(Seat, {
+        user: { id: userId },
+        payment: { id: paymentId },
+      });
+
+      // 결제 내역 상태 변경
+      await queryRunner.manager.update(
+        Payment,
+        { id: paymentId },
+        { status: paymentStatus.CANCLE },
+      );
+
+      const targetPaymentStatus = await queryRunner.manager.findOne(Payment, {
+        where: {
+          id: paymentId,
+        },
+        select: ['status'],
+      });
+      console.log(targetPaymentStatus);
+
+      if (targetPaymentStatus.status !== 'CANCLE') {
+        throw new Error('결제 상태 CANCLE 아님');
+      } else {
+        const currentPoint = await queryRunner.manager.find(Point, {
+          where: { user: { id: user.id } },
+          order: { created_at: 'DESC' },
+          take: 1,
+        });
+
+        // 현재 잔액
+        const currentBalance = currentPoint[0].balance;
+
+        const refundedPoint = await queryRunner.manager.findOne(Point, {
+          where: { payment: { id: paymentId } },
+        });
+
+        // 환불 받을 금액
+        const refundedPointValue = refundedPoint.withdraw;
+
+        // 환불
+        await queryRunner.manager.save(Point, {
+          user: { id: user.id },
+          payment: { id: paymentId },
+          deposit: refundedPointValue,
+          withdraw: 0,
+          balance: currentBalance + refundedPointValue,
+        });
+      }
+
+      await queryRunner.commitTransaction();
+      return { success: true, message: '결제 취소 완료' };
+    } catch (error) {
+      // 롤백 시에 실행할 코드 (예: 로깅)
+      console.error('Error during reservation:', error);
+      await queryRunner.rollbackTransaction();
+      return { status: 404, message: '취소 오류입니다.' };
+    } finally {
+      // 사용이 끝난 후에는 항상 queryRunner를 해제
+      await queryRunner.release();
+    }
   }
 }

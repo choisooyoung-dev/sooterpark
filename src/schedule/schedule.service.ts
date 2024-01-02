@@ -12,31 +12,44 @@ export class ScheduleService {
     private scheduleRepository: Repository<Schedule>,
     private dataSource: DataSource,
   ) {}
-  async create(performance_id: any, createScheduleDto: CreateScheduleDto) {
+
+  // 입력받은 날짜 mysql 형식으로 변환
+
+  async create(
+    performance_id: any,
+    createScheduleDto: CreateScheduleDto,
+    targetDate: string,
+  ) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      console.log(targetDate);
       const {
-        date,
+        start_date,
+        end_date,
         start_at,
         end_at,
         vip_seat_limit,
         royal_seat_limit,
         standard_seat_limit,
       } = createScheduleDto;
-      const createdSchedule = await this.scheduleRepository.save({
+
+      const createdSchedule = await queryRunner.manager.save(Schedule, {
         performance: performance_id,
-        date,
-        start_at,
-        end_at,
+        start_date,
+        end_date,
+        start_at: `${targetDate} ${start_at}`,
+        end_at: `${targetDate} ${end_at}`,
         vip_seat_limit,
         royal_seat_limit,
         standard_seat_limit,
+        targetDate,
       });
       await queryRunner.commitTransaction();
       return { success: true, message: '스케줄 추가', createdSchedule };
     } catch (error) {
+      console.log(error);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
