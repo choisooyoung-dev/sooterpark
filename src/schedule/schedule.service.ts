@@ -57,14 +57,6 @@ export class ScheduleService {
     }
   }
 
-  findAll() {
-    return `This action returns all schedule`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} schedule`;
-  }
-
   // 공연 일정 수정
   async update(id: number, updateScheduleDto: UpdateScheduleDto) {
     const queryRunner = this.dataSource.createQueryRunner();

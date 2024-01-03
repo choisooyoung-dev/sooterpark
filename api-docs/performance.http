@@ -17,7 +17,7 @@ GET {{domain}}/performance/28
 ###
 # 공연 좌석 조회
 GET {{domain}}/performance/28/42
-
+  
 ### 
 # 로그인
 # @name loginToken

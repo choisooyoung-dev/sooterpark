@@ -96,7 +96,7 @@ export class PaymentService {
           newSeatNum > getSheduleWithId[0].royal_seat_limit ||
           newSeatNum > getSheduleWithId[0].standard_seat_limit
         )
-          throw new Error('예약할 수 없는 좌석 번호 입니다.');
+          throw new Error('좌석 번호를 다시 입력하세요.');
 
         if (
           newGrade === 'V' &&
@@ -184,6 +184,10 @@ export class PaymentService {
     // 동시성 처리 - 격리 수준 READ COMMITTED
     await queryRunner.startTransaction('READ COMMITTED');
     try {
+      if (user.id !== user_id) {
+        throw new Error('권한이 없습니다');
+      }
+
       const allPayment = await queryRunner.manager.find(Payment, {
         where: {
           user: { id: user_id },
@@ -191,8 +195,6 @@ export class PaymentService {
         order: { created_at: 'DESC' },
         relations: ['performance'],
       });
-
-      //console.log('allPayment ======> ', allPayment);
       await queryRunner.commitTransaction();
       return { allPayment };
     } catch (error) {

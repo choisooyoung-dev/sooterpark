@@ -41,18 +41,19 @@ Authorization: Bearer {{AccessToken}}
 ###
 # 예매 생성
 POST {{domain}}/payment/create/28
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMwMF95QG5hdmVyLmNvbSIsInN1YiI6ImRmVHBuOGtoVGtEWG11bld2WWoxaEhabTJSajh4UzR1ZFo5RW9JaGF3Y2ciLCJpYXQiOjE3MDQyNDY4MjZ9.IEzt75KptDN1LDfzLfob9Pp5YspSgIvICY3g8u1Z0BA
+#Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMwMF95QG5hdmVyLmNvbSIsInN1YiI6ImRmVHBuOGtoVGtEWG11bld2WWoxaEhabTJSajh4UzR1ZFo5RW9JaGF3Y2ciLCJpYXQiOjE3MDQyNDY4MjZ9.IEzt75KptDN1LDfzLfob9Pp5YspSgIvICY3g8u1Z0BA
+Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
     "seats":[
         {
-            "grade": "V",
-            "seat_num": 125
+            "grade": "S",
+            "seat_num": 5
         },
         {
-            "grade": "V",
-            "seat_num": 126
+            "grade": "S",
+            "seat_num": 6
         }
     ],
     "schedule_id":42

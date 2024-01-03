@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Body,
   Patch,
   Param,
@@ -14,11 +13,14 @@ import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { Role } from 'src/user/types/userRole.type';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('SCHEDULE API')
 @Controller('performance/schedule')
 export class ScheduleController {
   constructor(private readonly scheduleService: ScheduleService) {}
 
+  @ApiOperation({ summary: '공연 스케줄 추가' })
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @Post('create/:performance_id')
@@ -34,16 +36,7 @@ export class ScheduleController {
     );
   }
 
-  @Get()
-  findAll() {
-    return this.scheduleService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.scheduleService.findOne(+id);
-  }
-
+  @ApiOperation({ summary: '공연 스케줄 수정' })
   @UseGuards(RolesGuard)
   @Roles(Role.Admin)
   @Patch('/:performance_id/:id')
@@ -53,9 +46,4 @@ export class ScheduleController {
   ) {
     return this.scheduleService.update(+id, updateScheduleDto);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.scheduleService.remove(+id);
-  // }
 }
