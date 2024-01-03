@@ -234,6 +234,7 @@ export class PerformanceService {
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      return { status: 404, message: error.message };
     } finally {
       await queryRunner.release();
     }
@@ -261,6 +262,7 @@ export class PerformanceService {
     } catch (error) {
       // console.log(error);
       await queryRunner.rollbackTransaction();
+      return { status: 404, message: error.message };
     } finally {
       await queryRunner.release();
     }
@@ -284,6 +286,7 @@ export class PerformanceService {
       return { success: true, message: '삭제 완료되었습니다.' };
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      return { status: 404, message: error.message };
     } finally {
       await queryRunner.release();
     }

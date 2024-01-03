@@ -48,6 +48,8 @@ export class PaymentService {
         where: { id: schedule_id },
       });
 
+      console.log('getSheduleWithId: ', getSheduleWithId);
+
       // 스케쥴 아이디에 따른 좌석들, 좌석 카운트용
       const getSeatCountWithScheduleId = await this.seatRepository.find({
         where: { schedule: { id: +schedule_id } },
@@ -88,6 +90,14 @@ export class PaymentService {
         const newSeatNum = seats[i].seat_num;
 
         let seatPriceWithGrade: number = 0;
+
+        if (
+          newSeatNum > getSheduleWithId[0].vip_seat_limit ||
+          newSeatNum > getSheduleWithId[0].royal_seat_limit ||
+          newSeatNum > getSheduleWithId[0].standard_seat_limit
+        )
+          throw new Error('예약할 수 없는 좌석 번호 입니다.');
+
         if (
           newGrade === 'V' &&
           getSeatCountWithScheduleId.length < getSheduleWithId[0].vip_seat_limit
@@ -140,6 +150,10 @@ export class PaymentService {
         take: 1,
       });
 
+      // 잔액 없을때 차감 불가
+      if (lastPoint[0].balance < totalSeatPrice)
+        throw new Error('잔액이 부족합니다.');
+
       // 차감
       await queryRunner.manager.save(Point, {
         user: { id: user.id },
@@ -156,6 +170,7 @@ export class PaymentService {
       // 롤백 시에 실행할 코드 (예: 로깅)
       console.error('Error during reservation:', error);
       await queryRunner.rollbackTransaction();
+      return { status: 404, message: error.message };
     } finally {
       // 사용이 끝난 후에는 항상 queryRunner를 해제
       await queryRunner.release();
@@ -184,7 +199,7 @@ export class PaymentService {
       // 롤백 시에 실행할 코드 (예: 로깅)
       console.error('Error during reservation:', error);
       await queryRunner.rollbackTransaction();
-      return { status: 404, message: '취소 오류입니다.' };
+      return { status: 404, message: error.message };
     } finally {
       // 사용이 끝난 후에는 항상 queryRunner를 해제
       await queryRunner.release();
@@ -288,7 +303,7 @@ export class PaymentService {
       // 롤백 시에 실행할 코드 (예: 로깅)
       console.error('Error during reservation:', error);
       await queryRunner.rollbackTransaction();
-      return { status: 404, message: '취소 오류입니다.' };
+      return { status: 404, message: error.message };
     } finally {
       // 사용이 끝난 후에는 항상 queryRunner를 해제
       await queryRunner.release();

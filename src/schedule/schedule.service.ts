@@ -51,6 +51,7 @@ export class ScheduleService {
     } catch (error) {
       console.log(error);
       await queryRunner.rollbackTransaction();
+      return { status: 404, message: error.message };
     } finally {
       await queryRunner.release();
     }
@@ -82,6 +83,7 @@ export class ScheduleService {
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
+      return { status: 404, message: error.message };
     } finally {
       await queryRunner.release();
     }
