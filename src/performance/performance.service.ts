@@ -51,25 +51,31 @@ export class PerformanceService {
     return performance;
   }
 
+  // 좌석 정보
   async getSeatInfo(performance_id: number, schedule_id: number) {
     const reservedSeatInfo = await this.seatRepository.find({
       where: { schedule: { id: schedule_id } },
     });
 
+    const defaultPrice = await this.performanceRepository.findOne({
+      where: { id: performance_id },
+      select: ['price'],
+    });
+
     const vipReservedSeats = reservedSeatInfo.filter(
       (seat) => seat.grade === 'V',
     );
-    console.log('vipReservedSeats: ', vipReservedSeats);
+    //  console.log('vipReservedSeats: ', vipReservedSeats);
 
     const royalReservedSeats = reservedSeatInfo.filter(
       (seat) => seat.grade === 'R',
     );
-    console.log('royalReservedSeats: ', royalReservedSeats);
+    // console.log('royalReservedSeats: ', royalReservedSeats);
 
     const standardReservedSeats = reservedSeatInfo.filter(
       (seat) => seat.grade === 'S',
     );
-    console.log('standardReservedSeats: ', standardReservedSeats);
+    // console.log('standardReservedSeats: ', standardReservedSeats);
 
     const scheduleSeatLimitInfo = await this.scheduleRepository.find({
       where: { id: schedule_id },
@@ -79,12 +85,83 @@ export class PerformanceService {
     const royalLimit = scheduleSeatLimitInfo[0].royal_seat_limit;
     const standardLimit = scheduleSeatLimitInfo[0].standard_seat_limit;
 
+    class SeatObject {
+      seat_num: number;
+      grade: string;
+      price: number;
+
+      constructor(seat_num: number, grade: string, price: number) {
+        this.seat_num = seat_num;
+        this.grade = grade;
+        this.price = price;
+      }
+    }
+
+    // 등급별 예약된 좌석 번호
+    const bookedVipSeatNum = [];
+    const bookedRoyalSeatNum = [];
+    const bookedStandardSeatNum = [];
+
+    vipReservedSeats.map((vipSeatNum) => {
+      bookedVipSeatNum.push(vipSeatNum.seat_num);
+    });
+    royalReservedSeats.map((royalSeatNum) => {
+      bookedRoyalSeatNum.push(royalSeatNum.seat_num);
+    });
+    standardReservedSeats.map((standardSeatNum) => {
+      bookedStandardSeatNum.push(standardSeatNum.seat_num);
+    });
+    // const seatObjectResult = new SeatObject(1, 'V', 30000);
+    // -----> seatobject ===>  SeatObject { seat_num: 1, grade: 'V', price: 30000 }
+
+    console.log('기본가', defaultPrice.price);
+    console.log('VIP 예약된 좌석 번호: ', bookedVipSeatNum);
+    console.log('R 예약된 좌석 번호: ', bookedRoyalSeatNum);
+    console.log('S 예약된 좌석 번호: ', bookedStandardSeatNum);
+
+    // 등급별 남은 좌석 번호
+    const reamainVipSeatNum = [];
+
+    for (let i = 1; i <= vipLimit; i++) {
+      // console.log(bookedVipSeatNum.some((num) => num === i));
+      if (!bookedVipSeatNum.some((num) => num === i)) {
+        reamainVipSeatNum.push(
+          new SeatObject(i, 'VIP', defaultPrice.price * 1.75),
+        );
+      }
+    }
+
+    // ROYAL
+    const reamainRoyalSeatNum = [];
+    for (let i = 1; i <= royalLimit; i++) {
+      // console.log(bookedVipSeatNum.some((num) => num === i));
+      if (!bookedRoyalSeatNum.some((num) => num === i)) {
+        reamainRoyalSeatNum.push(
+          new SeatObject(i, 'ROYAL', defaultPrice.price * 1.25),
+        );
+      }
+    }
+
+    // STANDARD
+    const reamainStandardSeatNum = [];
+    for (let i = 1; i <= standardLimit; i++) {
+      // console.log(bookedVipSeatNum.some((num) => num === i));
+      if (!bookedStandardSeatNum.some((num) => num === i)) {
+        reamainStandardSeatNum.push(
+          new SeatObject(i, 'STANDARD', defaultPrice.price),
+        );
+      }
+    }
     const remainingVipSeats = vipLimit - vipReservedSeats.length;
-    console.log('remainingVipSeats: ', remainingVipSeats);
     const remainingRoyalSeats = royalLimit - royalReservedSeats.length;
-    console.log('remainingRoyalSeats: ', remainingRoyalSeats);
     const remainingStandardSeats = standardLimit - standardReservedSeats.length;
-    console.log('remainingStandardSeats: ', remainingStandardSeats);
+
+    console.log('VIP 남은 좌석 수: ', remainingVipSeats);
+    console.log('VIP 남은 좌석 번호: ', reamainVipSeatNum);
+    console.log('ROYAL 남은 좌석 수: ', remainingRoyalSeats);
+    console.log('ROYAL 남은 좌석 번호: ', reamainRoyalSeatNum);
+    console.log('STANDARD 남은 좌석 수: ', remainingStandardSeats);
+    console.log('STANDARD 남은 좌석 번호: ', reamainStandardSeatNum);
 
     // 스케줄별 남은 자리가 0일 때 예매 불가
     if (
@@ -95,7 +172,15 @@ export class PerformanceService {
       throw new Error('매진되었습니다.');
     }
 
-    return { message: '예매 가능' };
+    return {
+      message: '예매 가능',
+      remainingVipSeats,
+      reamainVipSeatNum,
+      remainingRoyalSeats,
+      reamainRoyalSeatNum,
+      remainingStandardSeats,
+      reamainStandardSeatNum,
+    };
   }
 
   async search(keyword: string) {
