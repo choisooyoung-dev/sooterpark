@@ -18,8 +18,8 @@ POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "sss@gmail.com",
-    "password": "sss33"
+   "email": "sss33@gmail.com",
+   "password": "sss33"
 } 
 
 ###
@@ -33,23 +33,34 @@ Content-Type: application/json
     "password": "ooo11"
 } 
 
+### 
+#예매 전체 조회
+GET {{domain}}/payment/all/34
+Authorization: Bearer {{AccessToken}}
+ 
 ###
 # 예매 생성
-POST {{domain}}/payment/create/27
-Authorization: Bearer {{AccessToken}}
+POST {{domain}}/payment/create/28
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InMwMF95QG5hdmVyLmNvbSIsInN1YiI6ImRmVHBuOGtoVGtEWG11bld2WWoxaEhabTJSajh4UzR1ZFo5RW9JaGF3Y2ciLCJpYXQiOjE3MDQyNDY4MjZ9.IEzt75KptDN1LDfzLfob9Pp5YspSgIvICY3g8u1Z0BA
 Content-Type: application/json
 
 {
     "seats":[
         {
-            "grade": "R",
-            "seat_num": 133
+            "grade": "V",
+            "seat_num": 125
         },
         {
-            "grade": "R",
-            "seat_num": 134
+            "grade": "V",
+            "seat_num": 126
         }
     ],
-    "schedule_id":27
+    "schedule_id":42
 }
+
+
+###
+# 예매 취소
+DELETE  {{domain}}/payment/187
+Authorization: Bearer {{AccessToken}}
  

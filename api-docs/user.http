@@ -7,10 +7,10 @@ POST {{domain}}/user/register
 Content-Type: application/json
 
 {
-    "email": "sss@gmail.com",
-    "name": "sss",
+    "email": "sss33@gmail.com",
+    "name": "ss33",
     "password": "sss33",
-    "role": 0
+    "role": 1
 } 
 
 ###
@@ -20,8 +20,8 @@ POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "ooo@gmail.com",
-    "password": "ooo33"
+    "email": "sss1@gmail.com",
+     "password": "sss1"
 }   
 
 ###
@@ -32,6 +32,7 @@ Authorization: Bearer {{AccessToken}}
 ###
 # 네이버 로그인
 GET {{domain}}/user/naver/login
+Authorization: Bearer {{AccessToken}}
 
 ###
 #

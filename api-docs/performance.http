@@ -12,17 +12,21 @@ GET {{domain}}/performance/search?keyword=오페라
 
 ###
 # 공연 상세 조회
-GET {{domain}}/performance/19
+GET {{domain}}/performance/28
 
 ###
+# 공연 좌석 조회
+GET {{domain}}/performance/28/42
+
+### 
 # 로그인
 # @name loginToken
 POST {{domain}}/user/login
 Content-Type: application/json
 
 {
-    "email": "ooo@gmail.com",
-    "password": "ooo11"
+    "email": "sss1@gmail.com",
+    "password": "sss1"
 }   
  
 ###
@@ -42,10 +46,11 @@ Content-Type: application/json
     "location": "서울시",
     "image": "imageurl://urlurl",
     "category":0,
-    "date":"2023-12-29 ~ 2024-02-25",
     "price": 10000,
-    "start_at":"23:00",
-    "end_at":"01:00",
+    "start_date": "2024-01-01",
+    "end_date": "2024-01-05",
+    "start_at": "20:00:00",
+    "end_at": "22:00:00",
     "vip_seat_limit": 50,
     "royal_seat_limit": 50,
     "standard_seat_limit": 50
@@ -68,14 +73,16 @@ Authorization: Bearer {{AccessToken}}
 
 ###
 # 공연 스케줄 추가
-POST {{domain}}/performance/schedule/create/28
+POST {{domain}}/performance/schedule/create/26
 Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-    "date": "2023-12-29 ~ 2024-02-25",
-    "start_at": "19:30",
-    "end_at": "20:30",
+    "targetDate": "2024-01-05",
+    "start_date": "2024-01-01",
+    "end_date": "2024-01-05",
+    "start_at": "20:00:00",
+    "end_at": "22:00:00",
     "vip_seat_limit": 50,
     "royal_seat_limit": 50,
     "standard_seat_limit": 50
