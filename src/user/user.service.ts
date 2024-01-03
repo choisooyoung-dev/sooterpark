@@ -115,24 +115,36 @@ export class UserService {
       });
       await this.pointRepository.save({
         user: OAuthUser, // User 엔터티와 관계 설정
-        deposit: 0,
+        deposit: 1000000,
         withdraw: 0,
         balance: 1000000,
       });
+      const email = req.user.email;
+
+      const payload = { email, sub: req.user.id };
+
+      const access_token = await this.jwtService.signAsync(payload);
+
+      res.status(200).json({ message: '로그인 성공', access_token });
+
+      return {
+        message: '로그인 성공',
+        success: true,
+        access_token,
+      };
     }
     const email = req.user.email;
 
     const payload = { email, sub: req.user.id };
 
-    console.log('access_token:', this.jwtService.sign(payload));
+    const access_token = await this.jwtService.signAsync(payload);
 
-    res.redirect('/');
+    res.status(200).json({ message: '로그인 성공', access_token });
 
     return {
       message: '로그인 성공',
       success: true,
-      access_token: this.jwtService.sign(payload),
-      OAuthUser,
+      access_token,
     };
   }
 

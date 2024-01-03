@@ -11,6 +11,7 @@ import _ from 'lodash';
 import { UpdatePerformanceDto } from './dto/update-performance.dto';
 import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
 import { Schedule } from 'src/schedule/entities/schedule.entity';
+import { Seat } from 'src/seat/entities/seat.entity';
 
 @Injectable()
 export class PerformanceService {
@@ -19,6 +20,8 @@ export class PerformanceService {
     private performanceRepository: Repository<Performance>,
     @InjectRepository(Schedule)
     private scheduleRepository: Repository<Schedule>,
+    @InjectRepository(Seat)
+    private readonly seatRepository: Repository<Seat>,
     private dataSource: DataSource,
   ) {}
 
@@ -40,36 +43,59 @@ export class PerformanceService {
       .getOne();
 
     console.log('performance: ', performance);
-    for (let i = 0; i < performance.schedule.length; i++) {
-      let remainingVipSeats =
-        performance.schedule[i].vip_seat_limit -
-        performance.schedule[i].seats.filter((s) => s.grade === 'V').length;
-
-      let remainingRoyalSeats =
-        performance.schedule[i].royal_seat_limit -
-        performance.schedule[i].seats.filter((s) => s.grade === 'R').length;
-
-      let remainingStandardSeats =
-        performance.schedule[i].standard_seat_limit -
-        performance.schedule[i].seats.filter((s) => s.grade === 'S').length;
-
-      // 스케줄별 남은 자리가 0일 때 예매 불가
-      if (
-        remainingVipSeats === 0 &&
-        remainingRoyalSeats === 0 &&
-        remainingStandardSeats === 0
-      ) {
-        throw new Error('매진되었습니다.');
-      }
-
-      return { remainingVipSeats, remainingRoyalSeats, remainingStandardSeats };
-    }
 
     if (!performance) {
       throw new NotFoundException('찾을 수 없는 공연 ID 입니다.');
     }
 
     return performance;
+  }
+
+  async getSeatInfo(performance_id: number, schedule_id: number) {
+    const reservedSeatInfo = await this.seatRepository.find({
+      where: { schedule: { id: schedule_id } },
+    });
+
+    const vipReservedSeats = reservedSeatInfo.filter(
+      (seat) => seat.grade === 'V',
+    );
+    console.log('vipReservedSeats: ', vipReservedSeats);
+
+    const royalReservedSeats = reservedSeatInfo.filter(
+      (seat) => seat.grade === 'R',
+    );
+    console.log('royalReservedSeats: ', royalReservedSeats);
+
+    const standardReservedSeats = reservedSeatInfo.filter(
+      (seat) => seat.grade === 'S',
+    );
+    console.log('standardReservedSeats: ', standardReservedSeats);
+
+    const scheduleSeatLimitInfo = await this.scheduleRepository.find({
+      where: { id: schedule_id },
+    });
+
+    const vipLimit = scheduleSeatLimitInfo[0].vip_seat_limit;
+    const royalLimit = scheduleSeatLimitInfo[0].royal_seat_limit;
+    const standardLimit = scheduleSeatLimitInfo[0].standard_seat_limit;
+
+    const remainingVipSeats = vipLimit - vipReservedSeats.length;
+    console.log('remainingVipSeats: ', remainingVipSeats);
+    const remainingRoyalSeats = royalLimit - royalReservedSeats.length;
+    console.log('remainingRoyalSeats: ', remainingRoyalSeats);
+    const remainingStandardSeats = standardLimit - standardReservedSeats.length;
+    console.log('remainingStandardSeats: ', remainingStandardSeats);
+
+    // 스케줄별 남은 자리가 0일 때 예매 불가
+    if (
+      remainingVipSeats === 0 &&
+      remainingRoyalSeats === 0 &&
+      remainingStandardSeats === 0
+    ) {
+      throw new Error('매진되었습니다.');
+    }
+
+    return { message: '예매 가능' };
   }
 
   async search(keyword: string) {

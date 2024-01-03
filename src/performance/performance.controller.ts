@@ -27,6 +27,15 @@ export class PerformanceController {
     return this.performanceService.getAll();
   }
 
+  // 공연 남은 좌석 검색
+  @Get('/:performance_id/:schedule_id')
+  getSeatsInfo(
+    @Param('performance_id') performance_id: string,
+    @Param('schedule_id') schedule_id: string,
+  ) {
+    return this.performanceService.getSeatInfo(+performance_id, +schedule_id);
+  }
+
   // 공연 검색
   @Get('search')
   searchPerformances(@Query('keyword') keyword: string) {
