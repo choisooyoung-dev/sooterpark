@@ -8,18 +8,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import { CreatePaymentDto } from './dto/create-payment.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/utils/userInfo.decorator';
 import { CreateSeatDto } from 'src/seat/dto/create-seat.dto';
 import { User } from 'src/user/entities/user.entity';
-import {
-  ApiOperation,
-  ApiParam,
-  ApiProperty,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('payment')
@@ -44,14 +37,13 @@ export class PaymentController {
     @UserInfo() user: User,
     @Param('performance_id') performance_id: string,
     @Body('schedule_id') schedule_id: number,
-    @Body() createPaymentDto: CreatePaymentDto,
+
     @Body() createSeatDto: CreateSeatDto,
   ) {
     return this.paymentService.create(
       user,
       schedule_id,
       +performance_id,
-      createPaymentDto,
       createSeatDto,
     );
   }

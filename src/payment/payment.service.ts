@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePaymentDto } from './dto/create-payment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seat } from 'src/seat/entities/seat.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -13,23 +12,19 @@ import { paymentStatus } from './types/paymentStatus.types';
 @Injectable()
 export class PaymentService {
   constructor(
-    @InjectRepository(Payment)
-    private paymentRepository: Repository<Payment>,
     @InjectRepository(Seat)
     private seatRepository: Repository<Seat>,
     @InjectRepository(Performance)
     private performanceRepository: Repository<Performance>,
     @InjectRepository(Schedule)
     private scheduleRepository: Repository<Schedule>,
-    @InjectRepository(Point)
-    private pointRepository: Repository<Point>,
+
     private dataSource: DataSource,
   ) {}
   async create(
     user: any,
     schedule_id: any,
     performance_id: any,
-    createPaymentDto: CreatePaymentDto,
     createSeatDto: CreateSeatDto,
   ) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -48,14 +43,10 @@ export class PaymentService {
         where: { id: schedule_id },
       });
 
-      console.log('getSheduleWithId: ', getSheduleWithId);
-
       // 스케쥴 아이디에 따른 좌석들, 좌석 카운트용
       const getSeatCountWithScheduleId = await this.seatRepository.find({
         where: { schedule: { id: +schedule_id } },
       });
-
-      console.log('getSheduleWithId: ', getSheduleWithId);
 
       if (!targetPerformance) {
         // targetPerformance가 null인 경우 예외 처리
@@ -63,14 +54,13 @@ export class PaymentService {
       }
 
       // 스케줄 시간
-      const scheduleStartAt = getSheduleWithId[0].start_at;
+      const scheduleStartAt: any = getSheduleWithId[0].start_at;
       // 현재 시간
-      const nowDate = new Date();
+      const nowDate: any = new Date();
 
       const timeDifference = scheduleStartAt - nowDate;
-      console.log('timeDifference: ', timeDifference);
+
       const hoursDifference = timeDifference / (1000 * 60 * 60);
-      console.log('hoursDifference: ', hoursDifference);
 
       if (hoursDifference <= 0) {
         throw new Error('공연 시작 시간 이후로는 예매 불가');
@@ -129,7 +119,7 @@ export class PaymentService {
         }
 
         // 좌석 예매
-        const newSeat = await queryRunner.manager.save(Seat, {
+        await queryRunner.manager.save(Seat, {
           payment: { id: newPayment.id },
           schedule: schedule_id,
           grade: newGrade,
@@ -139,7 +129,6 @@ export class PaymentService {
           user: { id: user.id },
         });
         totalSeatPrice += seatPriceWithGrade;
-        console.log(newSeat);
       }
 
       // 포인트 차감
@@ -168,7 +157,7 @@ export class PaymentService {
       return { success: true, message: '결제 성공' };
     } catch (error) {
       // 롤백 시에 실행할 코드 (예: 로깅)
-      console.error('Error during reservation:', error);
+
       await queryRunner.rollbackTransaction();
       return { status: 404, message: error.message };
     } finally {
@@ -199,7 +188,7 @@ export class PaymentService {
       return { allPayment };
     } catch (error) {
       // 롤백 시에 실행할 코드 (예: 로깅)
-      console.error('Error during reservation:', error);
+
       await queryRunner.rollbackTransaction();
       return { status: 404, message: error.message };
     } finally {
@@ -236,11 +225,10 @@ export class PaymentService {
         throw new Error('권한이 없습니다.');
       }
 
-      console.log('targetPayment: ', targetPayment);
       // 스케줄 시간
-      const scheduleStartAt = targetPayment[0].schedule.start_at;
+      const scheduleStartAt: any = targetPayment[0].schedule.start_at;
       // 현재 시간
-      const nowDate = new Date();
+      const nowDate: any = new Date();
 
       const timeDifference = scheduleStartAt - nowDate;
       const hoursDifference = timeDifference / (1000 * 60 * 60);
@@ -268,7 +256,6 @@ export class PaymentService {
         },
         select: ['status'],
       });
-      console.log(targetPaymentStatus);
 
       if (targetPaymentStatus.status !== 'CANCLE') {
         throw new Error('결제 상태 CANCLE 아님');
@@ -303,7 +290,7 @@ export class PaymentService {
       return { success: true, message: '결제 취소 완료' };
     } catch (error) {
       // 롤백 시에 실행할 코드 (예: 로깅)
-      console.error('Error during reservation:', error);
+
       await queryRunner.rollbackTransaction();
       return { status: 404, message: error.message };
     } finally {

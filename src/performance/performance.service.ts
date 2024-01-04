@@ -42,8 +42,6 @@ export class PerformanceService {
       .where({ id: performance_id })
       .getOne();
 
-    console.log('performance: ', performance);
-
     if (!performance) {
       throw new NotFoundException('찾을 수 없는 공연 ID 입니다.');
     }
@@ -65,17 +63,14 @@ export class PerformanceService {
     const vipReservedSeats = reservedSeatInfo.filter(
       (seat) => seat.grade === 'V',
     );
-    //  console.log('vipReservedSeats: ', vipReservedSeats);
 
     const royalReservedSeats = reservedSeatInfo.filter(
       (seat) => seat.grade === 'R',
     );
-    // console.log('royalReservedSeats: ', royalReservedSeats);
 
     const standardReservedSeats = reservedSeatInfo.filter(
       (seat) => seat.grade === 'S',
     );
-    // console.log('standardReservedSeats: ', standardReservedSeats);
 
     const scheduleSeatLimitInfo = await this.scheduleRepository.find({
       where: { id: schedule_id },
@@ -114,16 +109,15 @@ export class PerformanceService {
     // const seatObjectResult = new SeatObject(1, 'V', 30000);
     // -----> seatobject ===>  SeatObject { seat_num: 1, grade: 'V', price: 30000 }
 
-    console.log('기본가', defaultPrice.price);
-    console.log('VIP 예약된 좌석 번호: ', bookedVipSeatNum);
-    console.log('R 예약된 좌석 번호: ', bookedRoyalSeatNum);
-    console.log('S 예약된 좌석 번호: ', bookedStandardSeatNum);
+    // console.log('기본가', defaultPrice.price);
+    // console.log('VIP 예약된 좌석 번호: ', bookedVipSeatNum);
+    // console.log('R 예약된 좌석 번호: ', bookedRoyalSeatNum);
+    // console.log('S 예약된 좌석 번호: ', bookedStandardSeatNum);
 
     // 등급별 남은 좌석 번호
     const reamainVipSeatNum = [];
 
     for (let i = 1; i <= vipLimit; i++) {
-      // console.log(bookedVipSeatNum.some((num) => num === i));
       if (!bookedVipSeatNum.some((num) => num === i)) {
         reamainVipSeatNum.push(
           new SeatObject(i, 'VIP', defaultPrice.price * 1.75),
@@ -134,7 +128,6 @@ export class PerformanceService {
     // ROYAL
     const reamainRoyalSeatNum = [];
     for (let i = 1; i <= royalLimit; i++) {
-      // console.log(bookedVipSeatNum.some((num) => num === i));
       if (!bookedRoyalSeatNum.some((num) => num === i)) {
         reamainRoyalSeatNum.push(
           new SeatObject(i, 'ROYAL', defaultPrice.price * 1.25),
@@ -145,7 +138,6 @@ export class PerformanceService {
     // STANDARD
     const reamainStandardSeatNum = [];
     for (let i = 1; i <= standardLimit; i++) {
-      // console.log(bookedVipSeatNum.some((num) => num === i));
       if (!bookedStandardSeatNum.some((num) => num === i)) {
         reamainStandardSeatNum.push(
           new SeatObject(i, 'STANDARD', defaultPrice.price),
@@ -156,12 +148,12 @@ export class PerformanceService {
     const remainingRoyalSeats = royalLimit - royalReservedSeats.length;
     const remainingStandardSeats = standardLimit - standardReservedSeats.length;
 
-    console.log('VIP 남은 좌석 수: ', remainingVipSeats);
-    console.log('VIP 남은 좌석 번호: ', reamainVipSeatNum);
-    console.log('ROYAL 남은 좌석 수: ', remainingRoyalSeats);
-    console.log('ROYAL 남은 좌석 번호: ', reamainRoyalSeatNum);
-    console.log('STANDARD 남은 좌석 수: ', remainingStandardSeats);
-    console.log('STANDARD 남은 좌석 번호: ', reamainStandardSeatNum);
+    // console.log('VIP 남은 좌석 수: ', remainingVipSeats);
+    // console.log('VIP 남은 좌석 번호: ', reamainVipSeatNum);
+    // console.log('ROYAL 남은 좌석 수: ', remainingRoyalSeats);
+    // console.log('ROYAL 남은 좌석 번호: ', reamainRoyalSeatNum);
+    // console.log('STANDARD 남은 좌석 수: ', remainingStandardSeats);
+    // console.log('STANDARD 남은 좌석 번호: ', reamainStandardSeatNum);
 
     // 스케줄별 남은 자리가 0일 때 예매 불가
     if (
@@ -213,7 +205,7 @@ export class PerformanceService {
       const newPerformance =
         await this.performanceRepository.save(createPerformanceDto);
       const id: any = newPerformance.id;
-      // console.log('id => ', id);
+
       const newSchedule = await this.scheduleRepository.save({
         performance: id,
         start_date,
