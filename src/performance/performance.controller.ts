@@ -17,10 +17,8 @@ import { Role } from 'src/user/types/userRole.type';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { CreateScheduleDto } from 'src/schedule/dto/create-schedule.dto';
 import {
-  ApiBody,
   ApiOperation,
   ApiParam,
-  ApiProperty,
   ApiQuery,
   ApiResponse,
   ApiTags,

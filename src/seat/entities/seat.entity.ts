@@ -40,21 +40,25 @@ export class Seat {
 
   @ManyToOne(() => Performance, (performance) => performance.seat, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   performance: Performance;
 
   @ManyToOne(() => Payment, (payment) => payment.id, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   payment: Payment;
 
   @ManyToOne(() => Schedule, (schedule) => schedule.seats, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   schedule: Schedule;
 
   @ManyToOne(() => User, (user) => user.seat, {
     nullable: false,
+    onDelete: 'CASCADE',
   })
   user: User;
 }

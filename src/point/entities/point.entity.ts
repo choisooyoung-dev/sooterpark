@@ -28,10 +28,10 @@ export class Point {
   @CreateDateColumn()
   created_at: Date;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Payment, (payment) => payment.id)
+  @ManyToOne(() => Payment, (payment) => payment.id, { onDelete: 'CASCADE' })
   payment: Payment;
 }
